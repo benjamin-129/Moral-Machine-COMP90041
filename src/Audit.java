@@ -6,7 +6,9 @@ import java.util.*;
 
 /**
  * Audit is a class that holds audit segment of the Moral Machine program.
- * The audit class takes the
+ * The audit class takes a number of scenarios and utilises the decide() method in EthicalEngine
+ * to decide the outcome of the scenario. Then summarises the results for each characteristic as
+ * a "statistic of projected survival".
  *
  * @author Benjamin Tam
  * @author email: ytam2@student.unimelb.edu.au
@@ -18,33 +20,50 @@ public class Audit {
     private Scenario[] sceArray;
     private Hashtable<String, Double> data = new Hashtable<String, Double>();
     private Hashtable<String, Double> survivorData = new Hashtable<String, Double>();
+    private Hashtable<String, Double> calcData = new Hashtable<String, Double>();
+    private ArrayList<String> speciesList = new ArrayList<>();
     private double totalPersons = 0;
     private double totalAge = 0;
     private double averageAge= 0;
     private int runCount = 0;
-    private Hashtable<String, Double> calcData = new Hashtable<String, Double>();
-    private ArrayList<String> speciesList = new ArrayList<>();
 
+
+    /**
+     * Empty Constructor for Audit object.
+     */
     public Audit(){
     }
 
-
+    /**
+     * Constructor for Audit object that takes an array of Scenarios.
+     * @param scenarios array of scenarios.
+     */
     public Audit(Scenario[] scenarios){
         sceArray = scenarios;
     }
 
+
+    /**
+     * changeScenarios is a method that changes the scenario array with a an array of scenarios
+     * that is provided to the method.
+     * @param newSces new scenario array.
+     */
     public void changeScenarios(Scenario[] newSces){
         sceArray = newSces;
     }
 
-
-    // Audit run without interactive mode
+    /**
+     * run is a method that runs the audit when EthicalEngine is run when not in interactive mode.
+     */
     public void run(){
         runUtil();
         survivalRatioCalc();
     }
 
-    // w interactive
+    /**
+     * runInteraction is a method that runs the audit when EthicalEngine is run in interactive mode.
+     * @param decisions an array of decisions.
+     */
     public void runInteraction(EthicalEngine.Decision[] decisions){
         for(int i = 0; i < sceArray.length; i++){
             runCount += 1;
@@ -59,15 +78,16 @@ public class Audit {
             if(decisions[i].equals(EthicalEngine.Decision.PEDESTRIANS)){
                 runInsert(pedestrians, passengers);
             }
-
         }
         survivalRatioCalc();
     }
 
 
-
-
-    public void runUtil(){
+    /**
+     * runUtil is a method that aids the run method in tallying the run count and tallying up the
+     * data needed to calculate the audit calculations.
+     */
+    private void runUtil(){
         for(Scenario sce : sceArray){
             runCount += 1;
             EthicalEngine.Decision decision = EthicalEngine.decide(sce);
@@ -75,8 +95,6 @@ public class Audit {
             ethicalengine.Character[] pedestrians = sce.getPedestrians();
 
             legalityInsert(sce, data);
-
-
 
             if(decision.equals(EthicalEngine.Decision.PASSENGERS)){
                 runInsert(passengers, pedestrians);
@@ -91,7 +109,12 @@ public class Audit {
     // Output key and values to list and sort using comparator decendingly.
     // Moved age to a variable
 
-    public void survivalRatioCalc(){
+    /**
+     * survivalRatioCalc is a method that calculates the survival ratios for all characteristics.
+     * The keys and values from data are output to a list and sorted ina descending order based
+     * on the calculated survival ratio.
+     */
+    private void survivalRatioCalc(){
         String[] bodyType = getEnum(ethicalengine.Character.BodyType.class);
         String[] professions = getEnum(Person.Profession.class);
         String[] genders = getEnum(ethicalengine.Character.Gender.class);
@@ -104,7 +127,6 @@ public class Audit {
         for(String key : data.keySet()){
             // Legality of crossing
             if(key.equals("red") || key.equals("green")){
-
                 calcData.put(key, data.get(key)/ runCount);
 
             }
@@ -113,9 +135,7 @@ public class Audit {
                 survivorCalcUtil(key);
             }
             if(key.equals("pet")){
-
                 survivorCalcUtil(key);
-
             }
             // Person Characteristics
             if(key.equals("you")){
@@ -134,7 +154,6 @@ public class Audit {
                         (ethicalengine.Character.BodyType.UNSPECIFIED)){
                     survivorCalcUtil(key);
                 }
-
             }
             if(Arrays.asList(professions).contains(key.toUpperCase())){
                 // Ignore None and Unknown professions
@@ -142,21 +161,18 @@ public class Audit {
                         (Person.Profession.UNKNOWN)){
                     survivorCalcUtil(key);
                 }
-
-
             }
             if(Arrays.asList(genders).contains(key.toUpperCase())){
                 // Ignore Unknown gender
                 if(!ethicalengine.Character.Gender.valueOf(key.toUpperCase()).equals(ethicalengine.Character.Gender.UNKNOWN)){
                     survivorCalcUtil(key);
                 }
-
             }
         }
     }
 
 
-    public void survivorCalcUtil(String key){
+    private void survivorCalcUtil(String key){
         if(survivorData.get(key) == null){
             calcData.put(key, 0.0);
         }
@@ -166,14 +182,12 @@ public class Audit {
     }
 
 
-    public static String[] getEnum(Class<? extends Enum<?>> e) {
+    private static String[] getEnum(Class<? extends Enum<?>> e) {
         return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
     }
 
 
-
-
-    public void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser){
+    private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser){
         for(ethicalengine.Character c : winner){
             if(c instanceof Person){
                 totalPersons += 1;
