@@ -77,13 +77,13 @@ public class Audit {
             legalityInsert(sce, data);
 
 
+
             if(decision.equals(EthicalEngine.Decision.PASSENGERS)){
                 runInsert(passengers, pedestrians);
             }
             if(decision.equals(EthicalEngine.Decision.PEDESTRIANS)){
                 runInsert(pedestrians, passengers);
             }
-
         }
     }
 
@@ -92,7 +92,6 @@ public class Audit {
     // Moved age to a variable
 
     public void survivalRatioCalc(){
-        String[] species = new String[] {"cat", "dog", "bird", "hamster", "rabbit"};
         String[] bodyType = getEnum(ethicalengine.Character.BodyType.class);
         String[] professions = getEnum(Person.Profession.class);
         String[] genders = getEnum(ethicalengine.Character.Gender.class);
@@ -107,7 +106,6 @@ public class Audit {
             if(key.equals("red") || key.equals("green")){
 
                 calcData.put(key, data.get(key)/ runCount);
-
 
             }
             // Animal Characteristics
@@ -179,6 +177,9 @@ public class Audit {
         for(ethicalengine.Character c : winner){
             if(c instanceof Person){
                 totalPersons += 1;
+
+                // Age tally
+                ageTally(c);
                 personKeyInsert(c, data);
                 personKeyInsert(c, survivorData);
             }
@@ -190,6 +191,8 @@ public class Audit {
         for(ethicalengine.Character p : loser){
             if(p instanceof Person){
                 totalPersons += 1;
+                // Age tally
+                ageTally(p);
                 personKeyInsert(p, data);
             }
             if(p instanceof Animal){
@@ -220,8 +223,7 @@ public class Audit {
 
 
     public void personKeyInsert(ethicalengine.Character c, Hashtable<String, Double> hTable){
-        // Age tally
-        ageTally(c);
+
 
         // You tally
         if(c.isYou()){
@@ -248,6 +250,7 @@ public class Audit {
 
     public void ageTally(ethicalengine.Character c){
         // Age tally
+        System.out.println(c.getAge());
         totalAge += c.getAge();
     }
 

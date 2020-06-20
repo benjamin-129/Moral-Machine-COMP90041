@@ -1,4 +1,6 @@
 import ethicalengine.*;
+import ethicalengine.Character;
+
 import java.io.*;
 import java.lang.NumberFormatException;
 import java.util.*;
@@ -13,6 +15,10 @@ import java.util.*;
  */
 public class EthicalEngine {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         Scanner keyboard = new Scanner(System.in);
 
@@ -72,7 +78,6 @@ public class EthicalEngine {
                 else if (consentInput.equals("no")) {
                     validIn = true;
                 }
-
             }
 
 
@@ -136,6 +141,7 @@ public class EthicalEngine {
                 }
             }
 
+            // Without config file
             else{
                 boolean continueStatus = true;
                 Audit interactiveAudit = new Audit();
@@ -165,8 +171,6 @@ public class EthicalEngine {
                 }
             }
         }
-
-
 
 
 
@@ -227,7 +231,13 @@ public class EthicalEngine {
 
     }
 
-
+    /**
+     * pathValidityCheck is a method that checks if a file path set after -r, -results, -c or
+     * --config are actual valid paths. If not, then the help message is printed and the program
+     * is terminated.
+     * @param command the command that the user input separated by spaces as an arraylist.
+     * @param help help message.
+     */
     public static void pathValidityCheck(List<String> command, String help) {
 
         List<String> validCommands = new ArrayList<>(Arrays.asList("-h", "--help", "-c",
@@ -249,7 +259,6 @@ public class EthicalEngine {
             else if(command.indexOf("--config") != -1){
                 index = command.indexOf("--config");
             }
-
             try{
                 if (validCommands.contains(command.get(index + 1))){
                     System.out.println(help);
@@ -264,6 +273,15 @@ public class EthicalEngine {
         }
     }
 
+    /**
+     * userJudgement is a method that prompts the user for their choice in whether to save the
+     * passengers or the pedestrians in the scenarios given.
+     * The choices are then taken into account and an audit is then done on the users choices and
+     * the scenarios and finally the statistics of the audit are displayed to the user.
+     * @param userScenario scenarios given to the user for them to decide the outcome of.
+     * @param keyboard Scanner object.
+     * @param interactiveAudit the
+     */
     public static void userJudgement(Scenario[] userScenario, Scanner keyboard,
                                      Audit interactiveAudit){
 
@@ -282,15 +300,24 @@ public class EthicalEngine {
                 decisions[i] = Decision.PEDESTRIANS;
             }
         }
-
-
+        // Audit is run on the decisions made by the user and the scenarios given.
         interactiveAudit.runInteraction(decisions);
 
-        // Display statistic
+        // Statistic is displayed to the user.
         System.out.println(interactiveAudit.toString());
     }
 
-    public static void userLogUtil(boolean consent, List<String> command, Audit interactiveAudit){
+    /**
+     * userLogUtil is a method that saves the audit results that have been run in a file
+     * depending on whether the user has consented to it.
+     * The results are saved in a file path given by the user if provided or are saved in the
+     * home directory if the user has not provided the file.
+     * @param consent boolean status of whether consent has been provided by the user to save the
+     *               results.
+     * @param command list containing the command input by the user.
+     * @param interactiveAudit the Audit object currently being used in this interactive situation.
+     */
+    private static void userLogUtil(boolean consent, List<String> command, Audit interactiveAudit){
 
         // If user consents to save, save results to path provided.
         if(consent){
@@ -307,6 +334,8 @@ public class EthicalEngine {
             }
 
             // Else save to home directory
+            // if mode is interactive, save to user.log
+            // else, save to results.log
             else{
                 if(command.contains("-i") || (command.contains("--interactive"))){
                     interactiveAudit.printToFile("user.log");
@@ -319,8 +348,14 @@ public class EthicalEngine {
         }
     }
 
-
-    public static List<List<String>> configReader(List<String> command){
+    /**
+     * configReader is a method that reads the csv provided by the user via a filepath if a
+     * config is provided, then parses the csv and saves the data into a nested list.
+     * The first item in the list is then removed as it only contains the headers.
+     * @param command
+     * @return
+     */
+    private static List<List<String>> configReader(List<String> command){
         int index;
         if(command.indexOf("-c") == -1){
             index = command.indexOf("--config");
@@ -329,7 +364,7 @@ public class EthicalEngine {
             index = command.indexOf("-c");
         }
 
-        // Open and save config data.
+        // Open and save config data in nested list
         File configFile = new File(command.get(index+1));
         List<List<String>> configData = new ArrayList<>();
 
@@ -345,17 +380,18 @@ public class EthicalEngine {
         catch(IOException e){
         }
 
-        // Deal with config data.
         // Delete first row with headers
         configData.remove(0);
-
         return configData;
-
-
     }
 
 
-
+    /**
+     * configInsertUtil is a method that takes the configData nested list containing data parsed
+     * from the config csv and processes it and stores the data in a hash table.
+     * @param configData
+     * @return
+     */
     public static List<Scenario> configInsertUtil(List<List<String>> configData){
 
 
@@ -371,6 +407,7 @@ public class EthicalEngine {
                 if (configData.get(csvIndex).get(0).substring(9, 10).equals("g")) {
                     crossingLegality = true;
                 }
+                else crossingLegality = false;
 
                 // Initialise list for passengers and pedestrians
                 List<ethicalengine.Character> configPasse = new ArrayList<>();
@@ -378,76 +415,68 @@ public class EthicalEngine {
 
                 csvIndex += 1;
                 while(csvIndex < configData.size()){
-
-
                     if(configData.get(csvIndex).get(0).substring(0, 3).equals("sce")){
                         break;
                     }
-
-                    // Person
-                    else if(configData.get(csvIndex).get(0).substring(0,3).equals("per")) {
-                        // Passenger
-                        if (configData.get(csvIndex).get(9).substring(0, 3).equals(
-                                "pas")) {
-                            try {
+                    try{
+                        // Check if data format is valid, if invalid, throw exception.
+                        if(configData.get(csvIndex).size() != 10){
+                            throw new ethicalengine.InvalidDataFormatException(csvIndex+2);
+                        }
+                        // Person
+                        else if(configData.get(csvIndex).get(0).substring(0,3).equals("per")) {
+                            // Passenger
+                            if (configData.get(csvIndex).get(9).substring(0, 3).equals(
+                                    "pas")) {
                                 configPasse.add(addPersonCSV(csvIndex, configData));
-                            } catch (NumberFormatException e) {
-                                System.out.println("WARNING: invalid number format in config " +
-                                        "file in line " + csvIndex + 1);
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
                             }
-
-                        }
-                        // Pedestrian
-                        else if (configData.get(csvIndex).get(9).substring(0, 3).equals(
-                                "ped")) {
-                            try {
+                            // Pedestrian
+                            else if (configData.get(csvIndex).get(9).substring(0, 3).equals(
+                                    "ped")) {
                                 configPeds.add(addPersonCSV(csvIndex, configData));
-                            } catch (NumberFormatException e) {
-                                System.out.println("WARNING: invalid number format in config " +
-                                        "file in line " + csvIndex + 1);
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
-                            }
-
-                        }
-                    }
-                    // Animal
-                    else if(configData.get(csvIndex).get(0).substring(0,3).equals("ani")){
-
-                        // Animal passenger
-                        if(configData.get(csvIndex).get(9).substring(0,3).equals(
-                                "pas")){
-                            try{
-                                configPasse.add(addAnimalCSV(csvIndex, configData));
-                            }
-                            catch(NumberFormatException e){
-                                System.out.println("WARNING: invalid number format in config " +
-                                        "file in line " + csvIndex + 1);
-                            }
-                            catch(Exception e){
-                                System.out.println(e.getMessage());
                             }
                         }
-                        // Animal Pedestrian
-                        else if(configData.get(csvIndex).get(9).substring(0,3).equals(
-                                "ped")){
+                        // Animal
+                        else if(configData.get(csvIndex).get(0).substring(0,3).equals("ani")){
 
-                            try{
-                                configPeds.add(addAnimalCSV(csvIndex, configData));
+                            // Animal passenger
+                            if(configData.get(csvIndex).get(9).substring(0,3).equals(
+                                    "pas")){
+                                try{
+                                    configPasse.add(addAnimalCSV(csvIndex, configData));
+                                }
+                                catch(NumberFormatException e){
+                                    System.out.println("WARNING: invalid number format in config " +
+                                            "file in line " + csvIndex + 1);
+                                }
+                                catch(Exception e){
+                                    System.out.println(e.getMessage());
+                                }
                             }
-                            catch(NumberFormatException e){
-                                System.out.println("WARNING: invalid number format in config " +
-                                        "file in line " + csvIndex);
-                            }
-                            catch(Exception e){
-                                System.out.println(e.getMessage());
+                            // Animal Pedestrian
+                            else if(configData.get(csvIndex).get(9).substring(0,3).equals(
+                                    "ped")){
+
+                                try{
+                                    configPeds.add(addAnimalCSV(csvIndex, configData));
+                                }
+                                catch(NumberFormatException e){
+                                    System.out.println("WARNING: invalid number format in config " +
+                                            "file in line " + csvIndex);
+                                }
+                                catch(Exception e){
+                                    System.out.println(e.getMessage());
+                                }
                             }
                         }
                     }
+                    catch(ethicalengine.InvalidDataFormatException e){
+                        System.out.println(e.getMessage());
+                    }
+                    finally{
+                        csvIndex += 1;
+                    }
 
-                    csvIndex += 1;
 
                 }
 
@@ -465,61 +494,82 @@ public class EthicalEngine {
 
 
 
-    public static Person addPersonCSV(int index, List<List<String>> configData) throws
-            ethicalengine.InvalidDataFormatException, ethicalengine.InvalidCharacteristicException,
-            NumberFormatException{
+    public static Person addPersonCSV(int index, List<List<String>> configData){
 
+
+        // Set defaults for person
         int age = 0;
-
-
-        // Check if data format is valid
-        if(configData.get(index).size() != 10){
-            throw new ethicalengine.InvalidDataFormatException(index+1);
-        }
-        age = Integer.parseInt(configData.get(index).get(2));
-        if(!isInEnum(configData.get(index).get(4).toUpperCase(), Person.Profession.class) &&
-                !configData.get(index).get(4).equals("")){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-        if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-        if(!isInEnum(configData.get(index).get(3).toUpperCase(), ethicalengine.Character.BodyType.class)){
-            System.out.println(configData.get(index).get(3));
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-
-        if(!configData.get(index).get(5).equals("TRUE") &&
-                !configData.get(index).get(5).equals("FALSE")){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-
-
-
-
-        // Profession defining
         Person.Profession prof = Person.Profession.NONE;
-
-        for(Person.Profession p : Person.Profession.values()) {
-            if (p.name().equals(configData.get(index).get(4).toUpperCase())) {
-                prof = p;
-            }
-        }
-
-        ethicalengine.Character.BodyType bodyType =
-                ethicalengine.Character.BodyType.valueOf(configData.get(index).get(3).toUpperCase());
-        ethicalengine.Character.Gender gend =
-                ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
-
-
+        ethicalengine.Character.BodyType bodyType = Character.BodyType.UNSPECIFIED;
+        ethicalengine.Character.Gender gend = Character.Gender.UNKNOWN;
         boolean isPregnant = false;
-        if(configData.get(index).get(5).equals("TRUE")){
-            isPregnant = true;
-        }
         boolean isYou = false;
-        if(configData.get(index).get(6).equals("TRUE")){
-            isYou = true;
+
+        try{
+            // Parse age
+            age = Integer.parseInt(configData.get(index).get(2));
+
+            // Parse Profession
+            if(!isInEnum(configData.get(index).get(4).toUpperCase(), Person.Profession.class) &&
+                    !configData.get(index).get(4).equals("")){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                for(Person.Profession p : Person.Profession.values()) {
+                    if (p.name().equals(configData.get(index).get(4).toUpperCase())) {
+                        prof = p;
+                    }
+                }
+            }
+
+            // Parse Gender
+            if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                gend = ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
+            }
+
+            // Parse Body Type
+            if(!isInEnum(configData.get(index).get(3).toUpperCase(), ethicalengine.Character.BodyType.class)){
+                System.out.println(configData.get(index).get(3));
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                bodyType = ethicalengine.Character.BodyType.valueOf(configData.get(index).get(3).toUpperCase());
+            }
+
+            // Parse Pregnancy status
+            if(!configData.get(index).get(5).equals("TRUE") &&
+                    !configData.get(index).get(5).equals("FALSE")){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                if(configData.get(index).get(5).equals("TRUE")){
+                    isPregnant = true;
+                }
+            }
+
+            // Parse isYou status
+            if(!configData.get(index).get(6).equals("TRUE") &&
+                    !configData.get(index).get(6).equals("FALSE")){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                if(configData.get(index).get(6).equals("TRUE")){
+                    isYou = true;
+                }
+            }
+
         }
+        catch(NumberFormatException e){
+            System.out.println("WARNING: invalid number format in config " +
+                    "file in line " + index + 2);
+        }catch(ethicalengine.InvalidCharacteristicException e){
+            System.out.println(e.getMessage());
+        }
+
+
 
         Person pers = new Person(age, prof, gend, bodyType, isPregnant);
         pers.setIsYou(isYou);
@@ -527,38 +577,58 @@ public class EthicalEngine {
         return pers;
     }
 
-    public static Animal addAnimalCSV(int index, List<List<String>> configData) throws
-            ethicalengine.InvalidDataFormatException, NumberFormatException,
-            ethicalengine.InvalidCharacteristicException{
-
-        // Check if data format is valid
-        if(configData.get(index).size() != 10){
-            throw new ethicalengine.InvalidDataFormatException(index+2);
-        }
-
-        if(configData.get(index).get(7).getClass() != String.class){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-        if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
-
-        if(!configData.get(index).get(8).equals("TRUE") &&
-                !configData.get(index).get(8).equals("FALSE")){
-            throw new ethicalengine.InvalidCharacteristicException(index+2);
-        }
+    public static Animal addAnimalCSV(int index, List<List<String>> configData) {
 
 
-        String species = configData.get(index).get(7);
-        int age = Integer.parseInt(configData.get(index).get(2));
-        ethicalengine.Character.Gender gend =
-                ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
-        ethicalengine.Character.BodyType bodyType =
-                ethicalengine.Character.BodyType.UNSPECIFIED;
+        int age = 0;
+        String species = "DEFAULT";
+        ethicalengine.Character.Gender gend = Character.Gender.UNKNOWN;
+        ethicalengine.Character.BodyType bodyType = Character.BodyType.UNSPECIFIED;
         boolean isPet = false;
-        if(configData.get(index).get(8).equals("TRUE")){
-            isPet = true;
+
+
+        try{
+
+            // Parse age
+            age = Integer.parseInt(configData.get(index).get(2));
+
+            // Parse Species
+            if(configData.get(index).get(7).getClass() != String.class){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                species = configData.get(index).get(7);
+            }
+
+            // Parse Gender
+            if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                gend =
+                        ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
+            }
+
+            // Parse isPet
+            if(!configData.get(index).get(8).equals("TRUE") &&
+                    !configData.get(index).get(8).equals("FALSE")){
+                throw new ethicalengine.InvalidCharacteristicException(index+2);
+            }
+            else{
+                if(configData.get(index).get(8).equals("TRUE")){
+                    isPet = true;
+                }
+            }
+
         }
+        catch(NumberFormatException e){
+            System.out.println("WARNING: invalid number format in config " +
+                    "file in line " + index + 2);
+        }
+        catch(ethicalengine.InvalidCharacteristicException e){
+            System.out.println(e.getMessage());
+        }
+
 
         Animal animal = new Animal(species, age, gend, bodyType, isPet);
         return animal;
