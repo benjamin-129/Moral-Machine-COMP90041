@@ -95,11 +95,20 @@ public class Person extends Character {
         }
     }
 
+    /**
+     * getProfession is a method that returns the profession of a Person
+     * @return Enumerated value of the Person's profession.
+     */
     public Profession getProfession() {
         return this.profession;
     }
 
-    public void setProfession(Profession profession) {
+    /**
+     * setProfession is a method that sets the profession of a person if they are an adult.
+     * If this method is used on a person that is not an adult, the profession will be set as NONE.
+     * @param profession enumerated value of a profession.
+     */
+    private void setProfession(Profession profession) {
         if (this.getAgeCategory() == AgeCategory.ADULT){
             this.profession = profession;
         }
@@ -108,14 +117,17 @@ public class Person extends Character {
         }
     }
 
-
+    /**
+     * isPregnant is a method that returns a boolean representing the pregnancy status of a person.
+     * @return boolean representing the pregenancy status of a person
+     */
     public boolean isPregnant(){
         return this.isPregnant;
     }
 
     /**
-     * Method to set the pregnant status of a person.
-     * For the sake of this simulation, only an adult female can be pregnant.
+     * setIsPregnant is a method to set the pregnant status of a person.
+     * Only adult females can be pregnant.
      * @param isPregnant Boolean status of pregnancy.
      */
     public void setIsPregnant(boolean isPregnant){
@@ -127,80 +139,88 @@ public class Person extends Character {
         }
     }
 
+    /**
+     * isYou is a method that returns a boolean to see if the person is the user.
+     * @return boolean to see if the person is the user.
+     */
     public boolean isYou(){
         return this.isYou;
     }
 
+    /**
+     * setIsYou is a method that sets the isYou status of the person.
+     * @param isYou boolean to see if the person is the user.
+     */
     public void setIsYou(boolean isYou){
         this.isYou = isYou;
     }
 
+    /**
+     * toString is a method that returns a string with information about the person.
+     * @return string of information about the person.
+     */
     public String toString(){
-        // isYou
+        // if the Person isYou
         if (this.isYou()){
             if (getAgeCategory() == AgeCategory.ADULT){
-                // isYou, Adult and pregnant: add profession
+                // returns: isYou, Body Type, Adult, Profession, Gender and is Pregnant
                 if (isPregnant()){
                     return "you "+getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()+
                             " "+getProfession().toLowercase()+" "+getGender().toLowercase()
                             +" pregnant";
                 }
-                // isYou, Adult and NOT pregnant: add profession
+                // returns if not pregnant: isYou, Body Type, Adult, Profession, Gender
                 else{
                     return "you "+getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()+
                             " "+getProfession().toLowercase()+" "+getGender().toLowercase();
                 }
             }
-            // isYou, Non Adult
+            // Person isYou and Not Adult
             else{
-                // Pregnant non adult
-                if (isPregnant()){
-                    return "you "+getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
-                            +" "+getGender().toLowercase()+" pregnant";
-                }
-                // Non-pregnant non adult
-                else{
-                    return "you "+getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
-                            +" "+getGender().toLowercase();
-                }
+                return "you "+getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
+                        +" "+getGender().toLowercase();
             }
         }
-        // NOT you
+        // Person is NOT you.
         else{
-            // NOT you, adult
+            // Person is NOT you and adult
             if(getAgeCategory() == AgeCategory.ADULT){
-                // NOT you, adult and pregnant
+                // returns: Body Type, Adult, Profession, Gender and is Pregnant.
                 if(isPregnant()){
                     return getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
                             +" "+getProfession().toLowercase()+" "+getGender().toLowercase()
                             +" pregnant";
                 }
-                // NOT you, adult and not pregnant
+                // returns if not pregnant: Body Type, Adult, Profession, Gender
                 else{
                     return getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
                             +" "+getProfession().toLowercase()+" "+getGender().toLowercase();
                 }
             }
-            // NOT you, non adult
+            // Person is NOT you & Not Adult
             else{
-                // NOT you, non adult and pregnant
-                if(isPregnant()){
-                    return getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
-                            +" "+getGender().toLowercase()+" pregnant";
-                }
-                // NOT you, non adult and not pregnant
-                else{
-                    return getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
-                            +" "+getGender().toLowercase();
-                }
+                // returns if not pregnant: Body Type, Age Category, Gender
+                return getBodyType().toLowercase()+" "+getAgeCategory().toLowercase()
+                        +" "+getGender().toLowercase();
+
             }
         }
     }
 
+    /**
+     * isPet method returns boolean representing if person is pet, which is false as a person can
+     * not be a pet.
+     * @return false pet status
+     */
     public boolean isPet(){
         return false;
     }
 
+    /**
+     * getSpecies method returns the species of the person, but a person does not have a species,
+     * hence, returns null.
+     * @return null species
+     */
     public String getSpecies(){
         return null;
     }

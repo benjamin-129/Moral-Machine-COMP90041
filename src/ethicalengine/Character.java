@@ -139,7 +139,7 @@ public abstract class Character {
 
     /**
      * Abstract method that returns a boolean to see if the character is the user.
-     * @return Boolean to see if character is the user.
+     * @return Boolean to see if the character is the user.
      */
     public abstract boolean isYou();
 
