@@ -105,14 +105,10 @@ public class Audit {
         }
     }
 
-    // Calculate survival ratios for characteristics
-    // Output key and values to list and sort using comparator decendingly.
-    // Moved age to a variable
 
     /**
      * survivalRatioCalc is a method that calculates the survival ratios for all characteristics.
-     * The keys and values from data are output to a list and sorted ina descending order based
-     * on the calculated survival ratio.
+     * The keys and values from data are output to a list.
      */
     private void survivalRatioCalc(){
         String[] bodyType = getEnum(ethicalengine.Character.BodyType.class);
@@ -120,12 +116,12 @@ public class Audit {
         String[] genders = getEnum(ethicalengine.Character.Gender.class);
         String[] ageCat = getEnum(Person.AgeCategory.class);
 
-        // Average age
+        // Average age calculation
         averageAge = totalAge/totalPersons;
 
 
         for(String key : data.keySet()){
-            // Legality of crossing
+            // Legality of crossing tally
             if(key.equals("red") || key.equals("green")){
                 calcData.put(key, data.get(key)/ runCount);
 
@@ -145,18 +141,17 @@ public class Audit {
                 survivorCalcUtil(key);
             }
             if(Arrays.asList(ageCat).contains(key.toUpperCase())){
-
                 survivorCalcUtil(key);
             }
             if(Arrays.asList(bodyType).contains(key.toUpperCase())){
-                // ignore unspecified body type
+                // Ignore unspecified body type
                 if(!ethicalengine.Character.BodyType.valueOf(key.toUpperCase()).equals
                         (ethicalengine.Character.BodyType.UNSPECIFIED)){
                     survivorCalcUtil(key);
                 }
             }
             if(Arrays.asList(professions).contains(key.toUpperCase())){
-                // Ignore None and Unknown professions
+                // Ignore Unknown professions
                 if(!Person.Profession.valueOf(key.toUpperCase()).equals
                         (Person.Profession.UNKNOWN)){
                     survivorCalcUtil(key);
@@ -164,7 +159,8 @@ public class Audit {
             }
             if(Arrays.asList(genders).contains(key.toUpperCase())){
                 // Ignore Unknown gender
-                if(!ethicalengine.Character.Gender.valueOf(key.toUpperCase()).equals(ethicalengine.Character.Gender.UNKNOWN)){
+                if(!ethicalengine.Character.Gender.valueOf(key.toUpperCase()).equals
+                        (ethicalengine.Character.Gender.UNKNOWN)){
                     survivorCalcUtil(key);
                 }
             }
@@ -172,6 +168,13 @@ public class Audit {
     }
 
 
+    /**
+     * survivorCalcUtil is a helper method that assists survivorCalc in the calculation of the
+     * survival rate for each characteristic by dividing the survivors characteristics by the total
+     * number tallied for both survivors and those that did not survive.
+     * If the the number of survivors that have the characteristic is 0, the result is 0.
+     * @param key
+     */
     private void survivorCalcUtil(String key){
         if(survivorData.get(key) == null){
             calcData.put(key, 0.0);
@@ -182,11 +185,24 @@ public class Audit {
     }
 
 
+    /**
+     * getEnum is a helper method that returns the enumerated values of an enum as a string array.
+     * @param e an enum class.
+     * @return string array containing the enum values of the enum class as strings.
+     */
     private static String[] getEnum(Class<? extends Enum<?>> e) {
         return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
     }
 
 
+    /**
+     * runInsert is a helper method that inserts the tally of each characteristics of each
+     * character into the data hash table.
+     * The method also tallies the characteristics of the survivors(winners) into the
+     * survivorData hash table.
+     * @param winner character array containing the survivors for the scenario.
+     * @param loser character array containing the non-survivors for the scenario.
+     */
     private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser){
         for(ethicalengine.Character c : winner){
             if(c instanceof Person){
@@ -215,8 +231,13 @@ public class Audit {
         }
     }
 
-
-    public void legalityInsert(Scenario sce, Hashtable<String, Double> hTable){
+    /**
+     * legalityInsert is a helper method that tallies the legality of the road crossing in the
+     * a hashtable (data).
+     * @param sce scenario object.
+     * @param hTable data hashtable.
+     */
+    private void legalityInsert(Scenario sce, Hashtable<String, Double> hTable){
         if(sce.isLegalCrossing()){
             if(hTable.containsKey("green")){
                 hTable.put("green", hTable.get("green") + 1);
@@ -235,9 +256,13 @@ public class Audit {
         }
     }
 
-
-    public void personKeyInsert(ethicalengine.Character c, Hashtable<String, Double> hTable){
-
+    /**
+     * personKeyInsert is a helper method that aids in the tallying up of characteristics of a
+     * Person in both data and survivorData hashtables.
+     * @param c person object that is being tallied.
+     * @param hTable data or survivorData hashtable.
+     */
+    private void personKeyInsert(ethicalengine.Character c, Hashtable<String, Double> hTable){
 
         // You tally
         if(c.isYou()){
@@ -257,29 +282,41 @@ public class Audit {
         if(c.getAgeCategory().equals(Person.AgeCategory.ADULT)){
             tallyKeyInsert(c.getProfession().toLowercase(), hTable);
         }
-
     }
 
 
-
-    public void ageTally(ethicalengine.Character c){
-        // Age tally
+    /**
+     * ageTally is a helper method that aids in tallying up the ages of the people in the scenarios.
+     * @param c person object.
+     */
+    private void ageTally(ethicalengine.Character c){
         System.out.println(c.getAge());
         totalAge += c.getAge();
     }
 
-    public void animalInsertKey(ethicalengine.Character c, Hashtable<String, Double> hTable){
-        // pet status tally
+    /**
+     * animalInsertKey is a helper method that aids in tallying up the characteristics of an
+     * animal object in the data and survivorData hash table.
+     * @param c animal object.
+     * @param hTable data or survivorData hash table.
+     */
+    private void animalInsertKey(ethicalengine.Character c, Hashtable<String, Double> hTable){
+        // Pet status tally
         if(c.isPet()){
             tallyKeyInsert("pet", hTable);
         }
         // Species tally
-
         speciesList.add(c.getSpecies());
         tallyKeyInsert(c.getSpecies(), hTable);
     }
 
-    public void tallyKeyInsert(String key, Hashtable<String, Double> hTable){
+    /**
+     * tallyKeyInsert is a helper method that aids in tallying up the number of characteristics
+     * (keys) for each character object in the animalInsertKey or personInsertKey methods.
+     * @param key characteristic key as a string.
+     * @param hTable data or survivorData hash table.
+     */
+    private void tallyKeyInsert(String key, Hashtable<String, Double> hTable){
         if(hTable.containsKey(key)){
             hTable.put(key, hTable.get(key)+1.0);
         }
@@ -288,9 +325,13 @@ public class Audit {
         }
     }
 
-    public List<Map.Entry<String, Double>> sortedOut(){
+    /**
+     * sortedOut is a helper method that sorts a nested List in descending order based on the
+     * second value, which is the survival ratio when used in the toString method.
+     * @return sorted List in descending order based on second value in nested list.
+     */
+    private List<Map.Entry<String, Double>> sortedOut(){
         List<Map.Entry<String, Double>> out = new ArrayList<>(calcData.entrySet());
-
 
         Collections.sort(out, (Map.Entry<String, Double> entry1,
                                Map.Entry<String, Double> entry2) ->
@@ -298,14 +339,27 @@ public class Audit {
         return out;
     }
 
+    /**
+     * setAuditType is a method that sets the type of audit that is being conducted.
+     * @param name string value of audit type.
+     */
     public void setAuditType(String name){
         this.auditType = name;
     }
 
+    /**
+     * getAuditType is a method that gets the audit type.
+     * @return
+     */
     public String getAuditType(){
         return this.auditType;
     }
 
+    /**
+     * toString is a method that outputs the audit results with the audit details: audit type,
+     * run count, characteristic survival ratio in descending order and average age.
+     * @return audit results.
+     */
     public String toString(){
         if (runCount == 0){
             return "no audit available\n";
@@ -337,6 +391,13 @@ public class Audit {
         }
     }
 
+    /**
+     * printToFile is a method that saves/ appends the audit results from toString in a file.
+     * If a filepath is provided after -r or --results and it exists, the output is appended to
+     * the file.
+     * If the filepath's directory does not exist, an error is printed.
+     * @param filepath filepath where log is saved/
+     */
     public void printToFile(String filepath){
 
 
@@ -356,9 +417,4 @@ public class Audit {
             }
         }
     }
-
-
-
-
-
 }
