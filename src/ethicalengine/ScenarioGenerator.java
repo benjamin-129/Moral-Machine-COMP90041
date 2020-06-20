@@ -60,7 +60,9 @@ public class ScenarioGenerator {
      * @param passengerCountMinimum minimum number of passengers.
      */
     public void setPassengerCountMinimum(int passengerCountMinimum) {
-        this.passengerCountMinimum = passengerCountMinimum;
+        if(passengerCountMinimum < this.passengerCountMaximum){
+            this.passengerCountMinimum = passengerCountMinimum;
+        }
     }
 
     /**
@@ -78,7 +80,9 @@ public class ScenarioGenerator {
      * @param pedestrianCountMinimum minumum number of pedestrians.
      */
     public void setPedestrianCountMinimum(int pedestrianCountMinimum) {
-        this.pedestrianCountMinimum = pedestrianCountMinimum;
+        if(pedestrianCountMinimum < this.passengerCountMaximum){
+            this.pedestrianCountMinimum = pedestrianCountMinimum;
+        }
     }
 
     /**
