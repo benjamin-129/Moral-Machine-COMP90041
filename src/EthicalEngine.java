@@ -58,22 +58,21 @@ public class EthicalEngine {
 
             boolean validIn = false;
             while (!validIn) {
-                System.out.println("Do you consent to have your decisions saved to a file? (yes/no)");
+                System.out.println("Do you consent to have your decisions saved to a file? " +
+                        "(yes/no)");
                 String consentInput = keyboard.nextLine();
-                try {
-                    if (!consentInput.equals("yes") && !consentInput.equals("no")) {
-                        throw new ethicalengine.InvalidInputException();
-                    }
-                    if (consentInput.equals("yes")) {
-                        consent = true;
-                        validIn = true;
-                    }
-                    if (consentInput.equals("no")) {
-                        validIn = true;
-                    }
-                } catch (ethicalengine.InvalidInputException e) {
-                    System.out.println(e.getMessage());
+                if (!consentInput.equals("yes") && !consentInput.equals("no")) {
+                    System.out.println("Invalid response. Do you consent to have your decisions " +
+                            "saved to a file? (yes/no)");
                 }
+                else if (consentInput.equals("yes")) {
+                    consent = true;
+                    validIn = true;
+                }
+                else if (consentInput.equals("no")) {
+                    validIn = true;
+                }
+
             }
 
 

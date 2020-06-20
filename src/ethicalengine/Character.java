@@ -14,20 +14,36 @@ public abstract class Character {
     private BodyType bodyType = BodyType.UNSPECIFIED;
 
 
+    /**
+     * Enumerated values of genders in this simulation.
+     */
     public enum Gender {
         MALE, FEMALE, UNKNOWN;
 
+        /**
+         * toLowercase is a method that returns the enumerated value of gender as a lowercase
+         * string.
+         * @return lowercase string of the enumerated value.
+         */
         public String toLowercase(){
             return name().toLowerCase();
         }
     }
+
+    /**
+     * Enumerated values of body types in this simulation.
+     */
     public enum BodyType {
         AVERAGE, ATHLETIC, OVERWEIGHT, UNSPECIFIED;
 
+        /**
+         * toLowercase is a method that returns the enumerated value of gender as a lowercase
+         * string.
+         * @return lowercase string of the enumerated value.
+         */
         public String toLowercase(){
             return name().toLowerCase();
         }
-
     }
 
     /**
@@ -38,14 +54,17 @@ public abstract class Character {
 
     /**
      * Class constructor that takes several parameters and creates a character class with the
-     * parameters.
-     * @param age Age of the character. A character can only be >= than 0.
+     * parameters. The age of a character is set by default to be 0.
+     * @param age Age of the character. A character can only be bigger or equal to 0.
      * @param gender Gender of the character.
      * @param bodyType Body type of the character.
      */
     public Character(int age, Gender gender, BodyType bodyType){
         if (age >= 0){
             this.age = age;
+        }
+        else{
+            this.age = 0;
         }
 
         this.gender = gender;

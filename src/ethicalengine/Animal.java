@@ -36,7 +36,7 @@ public class Animal extends Character {
 
     /**
      * Copy constructor for the animal class.
-     * @param otherAnimal
+     * @param otherAnimal other animal object
      */
     public Animal(Animal otherAnimal){
         this.species = otherAnimal.getSpecies();

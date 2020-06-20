@@ -1,7 +1,7 @@
 package ethicalengine;
 
 /**
- * Child class of character that defines a person object.
+ * Child class of character that defines a person in the simulation.
  * @author Benjamin Tam
  * @author email: ytam2@student.unimelb.edu.au
  * @author studentID: 889835
@@ -12,6 +12,10 @@ public class Person extends Character {
     private boolean isPregnant = false;
     private Person.Profession profession = Profession.NONE;
 
+    /**
+     * Enumerated values of professions that Person objects in the simulation can hold.
+     * Default value: NONE.
+     */
     public enum Profession {
         DOCTOR, CEO, CASHIER, POLICE, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE;
 
@@ -19,6 +23,11 @@ public class Person extends Character {
             return name().toLowerCase();
         }
     }
+
+    /**
+     * Enumerated values of age categories that a Person object can have.
+     * Value will depend on the age of the Person.
+     */
     public enum AgeCategory {
         BABY, CHILD, ADULT, SENIOR;
 
@@ -27,6 +36,14 @@ public class Person extends Character {
         }
     }
 
+    /**
+     * Constructor for a Person object.
+     * @param age age of the person.
+     * @param profession profession of the person.
+     * @param gender gender of the person.
+     * @param bodytype body type of the person.
+     * @param isPregnant pregnancy status of the person.
+     */
     public Person(int age, Profession profession, Gender gender, BodyType bodytype,
                   boolean isPregnant){
         super(age, gender, bodytype);
@@ -36,19 +53,32 @@ public class Person extends Character {
 
     }
 
-    // copy constructor
+    /**
+     * Copy constructor for a person object.
+     * @param otherPerson other person object.
+     */
     public Person(Person otherPerson){
         this.profession = otherPerson.getProfession();
         this.isPregnant = otherPerson.isPregnant();
         this.ageCategory = otherPerson.getAgeCategory();
     }
 
+    /**
+     * getAgeCategory is a method that returns the age category of the person.
+     * @return age category of the person.
+     */
     public AgeCategory getAgeCategory(){
         return this.ageCategory;
     }
 
-    // sort out age invariable
-    public void setAgeCategory() {
+    /**
+     * setAgeCategory sets the age category of the person based on the person's age.
+     * 0-4 : Baby
+     * 5-16 : Child
+     * 17-68 : Adult
+     * 68 < : Senior
+     */
+    private void setAgeCategory() {
         int age = this.getAge();
 
         if (age >= 0 && age <= 4){
