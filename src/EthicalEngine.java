@@ -1,10 +1,8 @@
 import ethicalengine.*;
 import ethicalengine.Character;
-
 import java.io.*;
 import java.lang.NumberFormatException;
 import java.util.*;
-
 
 /**
  * EthicalEngine is a class that holds the Moral Machine decider and the main program when
@@ -16,17 +14,22 @@ import java.util.*;
 public class EthicalEngine {
 
     /**
-     *
-     * @param args
+     * The main method of EthicalEngine that when run, prompts the user for flags.
+     * -h or --help : prints out instructions for the user.
+     * -i or --interactive : interactive mode for the user.
+     * -c or --config (filepath) : allows the user to set a filepath for a config csv file.
+     * -r or --results (filepath) : allows user to set a filepath for saving audit results.
+     * @param args -
      */
     public static void main(String[] args) {
         Scanner keyboard = new Scanner(System.in);
 
         System.out.print("$ java Ethical Engine ");
         String cmd = keyboard.nextLine();
-        List<String> command = new ArrayList<String>(Arrays.asList(cmd.split(" ")));
+        // split command by whitespace
+        List<String> command = new ArrayList<>(Arrays.asList(cmd.split(" ")));
 
-
+        // Help message
         String help = String.format("EthicalEngine - COMP90041 - Final Project\n\n" +
                         "Usage: java EthicalEngine [arguments]\n\n" +
                         "Arguments:\n" +
@@ -407,7 +410,6 @@ public class EthicalEngine {
                 if (configData.get(csvIndex).get(0).substring(9, 10).equals("g")) {
                     crossingLegality = true;
                 }
-                else crossingLegality = false;
 
                 // Initialise list for passengers and pedestrians
                 List<ethicalengine.Character> configPasse = new ArrayList<>();
@@ -476,8 +478,6 @@ public class EthicalEngine {
                     finally{
                         csvIndex += 1;
                     }
-
-
                 }
 
                 ethicalengine.Character[] pass =

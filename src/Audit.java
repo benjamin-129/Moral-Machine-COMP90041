@@ -290,7 +290,6 @@ public class Audit {
      * @param c person object.
      */
     private void ageTally(ethicalengine.Character c){
-        System.out.println(c.getAge());
         totalAge += c.getAge();
     }
 
