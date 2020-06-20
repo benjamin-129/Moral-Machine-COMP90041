@@ -1,12 +1,12 @@
 import ethicalengine.*;
-import ethicalengine.Animal;
 import java.io.*;
 import java.lang.NumberFormatException;
 import java.util.*;
 
 
 /**
- * Ethical Engine is a class that holds the Moral Machine decider
+ * EthicalEngine is a class that holds the Moral Machine decider and the main program when
+ * the Moral Machine program is run.
  * @author Benjamin Tam
  * @author email: ytam2@student.unimelb.edu.au
  * @author studentID: 889835
@@ -199,9 +199,6 @@ public class EthicalEngine {
 
 
         // No -i, -c  or -h flags, run random scenarios. Save in filepath if -r provided
-
-
-
         else {
             Random r = new Random();
             pathValidityCheck(command, help);

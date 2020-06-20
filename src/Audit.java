@@ -2,8 +2,16 @@ import ethicalengine.*;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-
 import java.util.*;
+
+/**
+ * Audit is a class that holds audit segment of the Moral Machine program.
+ * The audit class takes the
+ *
+ * @author Benjamin Tam
+ * @author email: ytam2@student.unimelb.edu.au
+ * @author studentID: 889835
+ */
 
 public class Audit {
     private String auditType = "Unspecified";
@@ -30,27 +38,11 @@ public class Audit {
     }
 
 
-    // Without interactive
+    // Audit run without interactive mode
     public void run(){
         runUtil();
         survivalRatioCalc();
     }
-
-    // W/o interactive
-    public void run(int runs){
-        runCount +=1;
-        sceArray = new Scenario[runs];
-        // Generate N = run number of scenarios
-        for(int i = 0; i < runs; i++){
-            sceArray[i] = new ScenarioGenerator().generate();
-        }
-
-        // Create tally and add it to the hash table
-        runUtil();
-        survivalRatioCalc();
-
-    }
-
 
     // w interactive
     public void runInteraction(EthicalEngine.Decision[] decisions){

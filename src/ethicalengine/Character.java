@@ -112,16 +112,40 @@ public abstract class Character {
         this.bodyType = bodyType;
     }
 
+    /**
+     * Abstract method that returns a boolean to see if the character is pregnant.
+     * @return Pregnant status of the character.
+     */
     public abstract boolean isPregnant();
 
+    /**
+     * Abstract method that returns a boolean to see if the character is the user.
+     * @return Boolean to see if character is the user.
+     */
     public abstract boolean isYou();
 
+    /**
+     * Abstract method that returns the age category of a character.
+     * @return Enumerated value of the character's age category.
+     */
     public abstract Person.AgeCategory getAgeCategory();
 
+    /**
+     * Abstract method that returns the profession of a character.
+     * @return Enumerated value of the character's profession.
+     */
     public abstract Person.Profession getProfession();
 
+    /**
+     * Abstract method that returns a boolean status to see if a character is a pet.
+     * @return Boolean to see if character is a pet.
+     */
     public abstract boolean isPet();
 
+    /**
+     * Abstract method that returns the species of a character.
+     * @return String of the character's species.
+     */
     public abstract String getSpecies();
 }
 

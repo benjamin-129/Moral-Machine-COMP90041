@@ -88,19 +88,38 @@ public class Animal extends Character {
         }
     }
 
+
+    /**
+     * Method that returns a boolean status on whether the animal is pregnant.
+     * @return false for the purpose of this program.
+     */
     @Override
     public boolean isPregnant() {
         return false;
     }
+
+    /**
+     * Method that returns a boolean status on whether the animal is the user.
+     * @return false as the user can not be an animal for the purpose of this program.
+     */
     @Override
     public boolean isYou() {
         return false;
     }
+
+    /**
+     * Method that returns the AgeCategory of the animal.
+     * @return null as for the purpose of this program, an animal has no age category.
+     */
     @Override
     public Person.AgeCategory getAgeCategory() {
         return null;
     }
 
+    /**
+     * Method that returns the profession of the animal.
+     * @return NONE as an animal does not have a profession.
+     */
     public Person.Profession getProfession(){
         return Person.Profession.NONE;
     }
