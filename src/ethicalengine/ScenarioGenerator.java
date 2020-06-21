@@ -29,7 +29,7 @@ public class ScenarioGenerator {
 
     /**
      * Constructor for the ScenarioGenerator that initialises a Random object with a set seed.
-     * @param seed
+     * @param seed seed set by the user.
      */
     public ScenarioGenerator(long seed){
         this.r = new Random(seed);

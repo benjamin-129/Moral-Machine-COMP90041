@@ -8,7 +8,7 @@ package ethicalengine;
  */
 public class Animal extends Character {
     private String species;
-    boolean isPet = false;
+    private boolean isPet = false;
 
     /**
      * Constructor for the animal class that takes a species parameter and creates an animal object.

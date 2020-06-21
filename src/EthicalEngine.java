@@ -79,9 +79,6 @@ public class EthicalEngine {
                         consent = true;
                         validIn = true;
                     }
-                    else if (consentInput.equals("no")) {
-                        validIn = true;
-                    }
                 }
                 catch (ethicalengine.InvalidInputException e){
                     System.out.println(e.getMessage());
@@ -360,8 +357,8 @@ public class EthicalEngine {
      * configReader is a method that reads the csv provided by the user via a filepath if a
      * config is provided, then parses the csv and saves the data into a nested list.
      * The first item in the list is then removed as it only contains the headers.
-     * @param command
-     * @return
+     * @param command command input by the user.
+     * @return nested list with parsed data.
      */
     private static List<List<String>> configReader(List<String> command){
         int index;

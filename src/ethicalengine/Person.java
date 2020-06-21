@@ -61,6 +61,7 @@ public class Person extends Character {
         this.profession = otherPerson.getProfession();
         this.isPregnant = otherPerson.isPregnant();
         this.ageCategory = otherPerson.getAgeCategory();
+        this.isYou = otherPerson.isYou;
     }
 
     /**

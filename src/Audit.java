@@ -173,7 +173,7 @@ public class Audit {
      * survival rate for each characteristic by dividing the survivors characteristics by the total
      * number tallied for both survivors and those that did not survive.
      * If the the number of survivors that have the characteristic is 0, the result is 0.
-     * @param key
+     * @param key value to be calculated.
      */
     private void survivorCalcUtil(String key){
         if(survivorData.get(key) == null){
@@ -348,7 +348,7 @@ public class Audit {
 
     /**
      * getAuditType is a method that gets the audit type.
-     * @return
+     * @return audit type.
      */
     public String getAuditType(){
         return this.auditType;
