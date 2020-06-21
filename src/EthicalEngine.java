@@ -382,6 +382,10 @@ public class EthicalEngine {
             }
             csv.close();
         }
+        catch(FileNotFoundException e){
+            System.out.println("ERROR: could not find config file.");
+            System.exit(0);
+        }
         catch(IOException e){
         }
 
@@ -529,7 +533,6 @@ public class EthicalEngine {
 
             // Parse Body Type
             if(!isInEnum(configData.get(index).get(3).toUpperCase(), ethicalengine.Character.BodyType.class)){
-                System.out.println(configData.get(index).get(3));
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
@@ -537,23 +540,23 @@ public class EthicalEngine {
             }
 
             // Parse Pregnancy status
-            if(!configData.get(index).get(5).equals("TRUE") &&
-                    !configData.get(index).get(5).equals("FALSE")){
+            if(!configData.get(index).get(5).toUpperCase().equals("TRUE") &&
+                    !configData.get(index).get(5).toUpperCase().equals("FALSE")){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
-                if(configData.get(index).get(5).equals("TRUE")){
+                if(configData.get(index).get(5).toUpperCase().equals("TRUE")){
                     isPregnant = true;
                 }
             }
 
             // Parse isYou status
-            if(!configData.get(index).get(6).equals("TRUE") &&
-                    !configData.get(index).get(6).equals("FALSE")){
+            if(!configData.get(index).get(6).toUpperCase().equals("TRUE") &&
+                    !configData.get(index).get(6).toUpperCase().equals("FALSE")){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
-                if(configData.get(index).get(6).equals("TRUE")){
+                if(configData.get(index).get(6).toUpperCase().equals("TRUE")){
                     isYou = true;
                 }
             }
@@ -614,12 +617,12 @@ public class EthicalEngine {
             }
 
             // Parse isPet
-            if(!configData.get(index).get(8).equals("TRUE") &&
-                    !configData.get(index).get(8).equals("FALSE")){
+            if(!configData.get(index).get(8).toUpperCase().equals("TRUE") &&
+                    !configData.get(index).get(8).toUpperCase().equals("FALSE")){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
-                if(configData.get(index).get(8).equals("TRUE")){
+                if(configData.get(index).get(8).toUpperCase().equals("TRUE")){
                     isPet = true;
                 }
             }
@@ -644,6 +647,7 @@ public class EthicalEngine {
      * value in the enum class.
      * @param value string value to check if it is in the enum class.
      * @param eClass the Enum class.
+     * @param <E> Enum
      * @return boolean whether the value is in the enum.
      */
     private static <E extends Enum<E>> boolean isInEnum(String value, Class<E> eClass) {

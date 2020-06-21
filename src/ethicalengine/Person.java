@@ -17,7 +17,8 @@ public class Person extends Character {
      * Default value: NONE.
      */
     public enum Profession {
-        DOCTOR, CEO, CASHIER, POLICE, CRIMINAL, HOMELESS, UNEMPLOYED, UNKNOWN, NONE;
+        DOCTOR, CEO, CASHIER, POLICE, CRIMINAL, HOMELESS, UNEMPLOYED, STUDENT,
+        PROFESSOR, UNKNOWN, NONE;
 
         public String toLowercase(){
             return name().toLowerCase();
@@ -77,7 +78,7 @@ public class Person extends Character {
      * 0-4 : Baby
      * 5-16 : Child
      * 17-68 : Adult
-     * 68 < : Senior
+     * Older than 68 : Senior
      */
     private void setAgeCategory() {
         int age = this.getAge();

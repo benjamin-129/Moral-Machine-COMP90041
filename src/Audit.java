@@ -22,8 +22,8 @@ public class Audit {
     private Hashtable<String, Double> survivorData = new Hashtable<String, Double>();
     private Hashtable<String, Double> calcData = new Hashtable<String, Double>();
     private ArrayList<String> speciesList = new ArrayList<>();
-    private double totalPersons = 0;
-    private double totalAge = 0;
+    private double totalPersonSurvivors = 0;
+    private double totalAgeSurvivors = 0;
     private double averageAge= 0;
     private int runCount = 0;
 
@@ -117,7 +117,7 @@ public class Audit {
         String[] ageCat = getEnum(Person.AgeCategory.class);
 
         // Average age calculation
-        averageAge = totalAge/totalPersons;
+        averageAge = totalAgeSurvivors/totalPersonSurvivors;
 
 
         for(String key : data.keySet()){
@@ -127,13 +127,20 @@ public class Audit {
 
             }
             // Animal Characteristics
+            if(key.equals("animal")){
+                survivorCalcUtil(key);
+            }
             if(speciesList.contains(key)){
                 survivorCalcUtil(key);
             }
             if(key.equals("pet")){
                 survivorCalcUtil(key);
             }
+
             // Person Characteristics
+            if(key.equals("person")){
+                survivorCalcUtil(key);
+            }
             if(key.equals("you")){
                 survivorCalcUtil(key);
             }
@@ -206,7 +213,7 @@ public class Audit {
     private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser){
         for(ethicalengine.Character c : winner){
             if(c instanceof Person){
-                totalPersons += 1;
+                totalPersonSurvivors += 1;
 
                 // Age tally
                 ageTally(c);
@@ -220,9 +227,6 @@ public class Audit {
         }
         for(ethicalengine.Character p : loser){
             if(p instanceof Person){
-                totalPersons += 1;
-                // Age tally
-                ageTally(p);
                 personKeyInsert(p, data);
             }
             if(p instanceof Animal){
@@ -264,6 +268,7 @@ public class Audit {
      */
     private void personKeyInsert(ethicalengine.Character c, Hashtable<String, Double> hTable){
 
+        tallyKeyInsert("person", hTable);
         // You tally
         if(c.isYou()){
             tallyKeyInsert("you", hTable);
@@ -290,7 +295,7 @@ public class Audit {
      * @param c person object.
      */
     private void ageTally(ethicalengine.Character c){
-        totalAge += c.getAge();
+        totalAgeSurvivors += c.getAge();
     }
 
     /**
@@ -300,6 +305,8 @@ public class Audit {
      * @param hTable data or survivorData hash table.
      */
     private void animalInsertKey(ethicalengine.Character c, Hashtable<String, Double> hTable){
+
+        tallyKeyInsert("animal", hTable);
         // Pet status tally
         if(c.isPet()){
             tallyKeyInsert("pet", hTable);
@@ -332,6 +339,7 @@ public class Audit {
     private List<Map.Entry<String, Double>> sortedOut(){
         List<Map.Entry<String, Double>> out = new ArrayList<>(calcData.entrySet());
 
+        // Sort by values in descending order
         Collections.sort(out, (Map.Entry<String, Double> entry1,
                                Map.Entry<String, Double> entry2) ->
                 entry2.getValue().compareTo(entry1.getValue()));
@@ -375,11 +383,7 @@ public class Audit {
             List<Map.Entry<String, Double>> dataList = sortedOut();
 
             for(Map.Entry<String, Double> item : dataList){
-
-                if(item.getValue() != 0){
-                    sb.append("\n" + item.getKey() + ": " + String.format("%.2f", item.getValue()));
-                }
-
+                sb.append("\n" + item.getKey() + ": " + String.format("%.1f", item.getValue()));
             }
 
             sb.append("\n--");
