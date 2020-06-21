@@ -60,13 +60,7 @@ public abstract class Character {
      * @param bodyType Body type of the character.
      */
     public Character(int age, Gender gender, BodyType bodyType){
-        if (age >= 0){
-            this.age = age;
-        }
-        else{
-            this.age = 0;
-        }
-
+        setAge(age);
         this.gender = gender;
         this.bodyType = bodyType;
     }
@@ -93,7 +87,7 @@ public abstract class Character {
      * A method that sets the age of the character using an int parameter.
      * @param age Age of the character.
      */
-    protected void setAge(int age) {
+    public void setAge(int age) {
         if (age>= 0){
             this.age = age;
         }

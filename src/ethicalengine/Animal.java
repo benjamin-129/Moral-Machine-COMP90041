@@ -55,7 +55,7 @@ public class Animal extends Character {
      * A method that sets the species of the animal.
      * @param species Species of the animal.
      */
-    protected void setSpecies(String species) {
+    public void setSpecies(String species) {
         this.species = species;
     }
 
