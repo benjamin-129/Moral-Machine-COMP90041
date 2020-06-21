@@ -70,16 +70,21 @@ public class EthicalEngine {
                 System.out.println("Do you consent to have your decisions saved to a file? " +
                         "(yes/no)");
                 String consentInput = keyboard.nextLine();
-                if (!consentInput.equals("yes") && !consentInput.equals("no")) {
-                    System.out.println("Invalid response. Do you consent to have your decisions " +
-                            "saved to a file? (yes/no)");
+
+                try{
+                    if (!consentInput.equals("yes") && !consentInput.equals("no")) {
+                        throw new ethicalengine.InvalidInputException();
+                    }
+                    else if (consentInput.equals("yes")) {
+                        consent = true;
+                        validIn = true;
+                    }
+                    else if (consentInput.equals("no")) {
+                        validIn = true;
+                    }
                 }
-                else if (consentInput.equals("yes")) {
-                    consent = true;
-                    validIn = true;
-                }
-                else if (consentInput.equals("no")) {
-                    validIn = true;
+                catch (ethicalengine.InvalidInputException e){
+                    System.out.println(e.getMessage());
                 }
             }
 
@@ -391,12 +396,11 @@ public class EthicalEngine {
 
     /**
      * configInsertUtil is a method that takes the configData nested list containing data parsed
-     * from the config csv and processes it and stores the data in a hash table.
-     * @param configData
-     * @return
+     * from the config csv and processes it and converts it into a list of scenarios.
+     * @param configData List containing data from the config file.
+     * @return List of scenarios processed from the config file.
      */
-    public static List<Scenario> configInsertUtil(List<List<String>> configData){
-
+    private static List<Scenario> configInsertUtil(List<List<String>> configData){
 
         List<Scenario> configSce = new ArrayList<>();
         int csvIndex = 0;
@@ -405,7 +409,7 @@ public class EthicalEngine {
 
             if(csvRow.get(0).substring(0, 3).equals("sce")){
 
-                // Legality of crossing
+                // Processing legality of crossing for each scenario
                 boolean crossingLegality = false;
                 if (configData.get(csvIndex).get(0).substring(9, 10).equals("g")) {
                     crossingLegality = true;
@@ -421,11 +425,16 @@ public class EthicalEngine {
                         break;
                     }
                     try{
-                        // Check if data format is valid, if invalid, throw exception.
+                        // Check if data format is valid (10 items in row), if invalid, throw
+                        // invalid data format exception.
                         if(configData.get(csvIndex).size() != 10){
                             throw new ethicalengine.InvalidDataFormatException(csvIndex+2);
                         }
-                        // Person
+
+                        // Processes character and adds the character into a character arraylist
+                        // depending on whether the character is a pedestrian or passenger
+
+                        // Processing Person
                         else if(configData.get(csvIndex).get(0).substring(0,3).equals("per")) {
                             // Passenger
                             if (configData.get(csvIndex).get(9).substring(0, 3).equals(
@@ -438,37 +447,19 @@ public class EthicalEngine {
                                 configPeds.add(addPersonCSV(csvIndex, configData));
                             }
                         }
-                        // Animal
+                        // Processing Animal
                         else if(configData.get(csvIndex).get(0).substring(0,3).equals("ani")){
 
                             // Animal passenger
                             if(configData.get(csvIndex).get(9).substring(0,3).equals(
                                     "pas")){
-                                try{
-                                    configPasse.add(addAnimalCSV(csvIndex, configData));
-                                }
-                                catch(NumberFormatException e){
-                                    System.out.println("WARNING: invalid number format in config " +
-                                            "file in line " + csvIndex + 1);
-                                }
-                                catch(Exception e){
-                                    System.out.println(e.getMessage());
-                                }
+
+                                configPasse.add(addAnimalCSV(csvIndex, configData));
                             }
                             // Animal Pedestrian
                             else if(configData.get(csvIndex).get(9).substring(0,3).equals(
                                     "ped")){
-
-                                try{
-                                    configPeds.add(addAnimalCSV(csvIndex, configData));
-                                }
-                                catch(NumberFormatException e){
-                                    System.out.println("WARNING: invalid number format in config " +
-                                            "file in line " + csvIndex);
-                                }
-                                catch(Exception e){
-                                    System.out.println(e.getMessage());
-                                }
+                                configPeds.add(addAnimalCSV(csvIndex, configData));
                             }
                         }
                     }
@@ -480,11 +471,13 @@ public class EthicalEngine {
                     }
                 }
 
+                // Convert passenger and pedestrian arraylists to arrays
                 ethicalengine.Character[] pass =
                         configPasse.toArray(new ethicalengine.Character[configPasse.size()]);
                 ethicalengine.Character[] peds =
                         configPeds.toArray(new ethicalengine.Character[configPeds.size()]);
 
+                // Add scenario generated from config file to the scenario array
                 configSce.add(new Scenario(pass, peds, crossingLegality));
             }
         }
@@ -492,12 +485,18 @@ public class EthicalEngine {
     }
 
 
+    /**
+     * addPersonCSV is a helper method that processes the characteristics of a person and returns
+     * the new person object when the method is called.
+     * @param index the line index where the person's characteristics are stored in the list.
+     * @param configData nested list containing all the character's data processed and parsed
+     *                   from the CSV file.
+     * @return person object.
+     */
+    private static Person addPersonCSV(int index, List<List<String>> configData){
 
 
-    public static Person addPersonCSV(int index, List<List<String>> configData){
-
-
-        // Set defaults for person
+        // Set defaults for new person
         int age = 0;
         Person.Profession prof = Person.Profession.NONE;
         ethicalengine.Character.BodyType bodyType = Character.BodyType.UNSPECIFIED;
@@ -506,7 +505,8 @@ public class EthicalEngine {
         boolean isYou = false;
 
         try{
-            // Parse age
+            // Parse age; throws number format exception if age is not able to be parsed to an
+            // integer
             age = Integer.parseInt(configData.get(index).get(2));
 
             // Parse Profession
@@ -570,16 +570,23 @@ public class EthicalEngine {
         }
 
 
-
+        // Create new person object from parsed data.
         Person pers = new Person(age, prof, gend, bodyType, isPregnant);
         pers.setIsYou(isYou);
-
         return pers;
     }
 
-    public static Animal addAnimalCSV(int index, List<List<String>> configData) {
+    /**
+     * addAnimalCSV is a helper method that processes the characteristics of an animal and returns
+     * the new animal object when the method is called.
+     * @param index the line index where the animal's characteristics are stored in the list.
+     * @param configData nested list containing all the character's data processed and parsed
+     *                   from the CSV file.
+     * @return animal object.
+     */
+    private static Animal addAnimalCSV(int index, List<List<String>> configData) {
 
-
+        // Set default values for new animal object.
         int age = 0;
         String species = "DEFAULT";
         ethicalengine.Character.Gender gend = Character.Gender.UNKNOWN;
@@ -629,13 +636,20 @@ public class EthicalEngine {
             System.out.println(e.getMessage());
         }
 
-
+        // Create new animal object
         Animal animal = new Animal(species, age, gend, bodyType, isPet);
         return animal;
 
     }
 
-    public static <E extends Enum<E>> boolean isInEnum(String value, Class<E> eClass) {
+    /**
+     * isInEnum is a helper method that returns a boolean to represent if a string value is a
+     * value in the enum class.
+     * @param value string value to check if it is in the enum class.
+     * @param eClass the Enum class.
+     * @return boolean whether the value is in the enum.
+     */
+    private static <E extends Enum<E>> boolean isInEnum(String value, Class<E> eClass) {
         for (E e : eClass.getEnumConstants()) {
             if(e.name().equals(value.toUpperCase())){
                 return true;
@@ -645,7 +659,9 @@ public class EthicalEngine {
     }
 
 
-
+    /**
+     * Enumerated values of decisions in this simulation.
+     */
     public enum Decision {
         PASSENGERS, PEDESTRIANS;
 
@@ -655,6 +671,12 @@ public class EthicalEngine {
     }
 
 
+    /**
+     * decide is a method that takes in data from the passengers and pedestrians and adds or
+     * removes weights based on various factors and outputs a decision on which party will survive.
+     * @param scenario scenario provided that the model has to decide on.
+     * @return returns a decision, either PASSENGERS or PEDESTRIANS.
+     */
     public static Decision decide(Scenario scenario){
 
         // Initialise weights for each side.
@@ -666,11 +688,13 @@ public class EthicalEngine {
         boolean isLegalCrossing = scenario.isLegalCrossing();
 
 
+        // If road crossing is legal, +1 weight for each pedestrian
+        // else, a penalty of 0.5 weight will be given to each pedestrian.
         if (isLegalCrossing){
-            pedWeight += pedestrians.length + 1;
+            pedWeight += pedestrians.length;
         }
         else{
-            pedWeight -= (pedestrians.length + 1) / 22;
+            pedWeight -= (pedestrians.length * 0.5);
         }
 
         // Add weights for each characteristic needed for passengers
@@ -702,7 +726,7 @@ public class EthicalEngine {
                 passWeight += 1;
             }
             if(passengers[i].getProfession() == Person.Profession.CRIMINAL){
-                passWeight -= 1;
+                passWeight -= 2;
             }
 
             // Preference if animal is pet
@@ -738,7 +762,7 @@ public class EthicalEngine {
                 pedWeight += 1;
             }
             if(pedestrians[i].getProfession() == Person.Profession.CRIMINAL){
-                pedWeight -= 1;
+                pedWeight -= 2;
             }
 
             // Preference if animal is a pet
