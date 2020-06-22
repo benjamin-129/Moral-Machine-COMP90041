@@ -25,9 +25,10 @@ public class EthicalEngine {
         Scanner keyboard = new Scanner(System.in);
 
         System.out.print("$ java Ethical Engine ");
-        String cmd = keyboard.nextLine();
+//        String cmd = keyboard.nextLine();
         // split command by whitespace
-        List<String> command = new ArrayList<>(Arrays.asList(cmd.split(" ")));
+//        List<String> command = new ArrayList<>(Arrays.asList(cmd.split(" ")));
+        List<String> command = new ArrayList<>(Arrays.asList(args));
 
         // Help message
         String help = String.format("EthicalEngine - COMP90041 - Final Project\n\n" +
@@ -138,7 +139,10 @@ public class EthicalEngine {
                         else if(i == userScenarioArr.size()-1){
                             // Try to get it to exit on any press
                             System.out.println("That's all. Press Enter to quit.");
-                            try{System.in.read();}
+                            try{
+                                System.in.read();
+                                System.exit(0);
+                            }
                             catch(Exception e){}
 
                         }
@@ -572,7 +576,7 @@ public class EthicalEngine {
 
         // Create new person object from parsed data.
         Person pers = new Person(age, prof, gend, bodyType, isPregnant);
-        pers.setIsYou(isYou);
+        pers.setAsYou(isYou);
         return pers;
     }
 

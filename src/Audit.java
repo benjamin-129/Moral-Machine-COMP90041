@@ -2,6 +2,8 @@ import ethicalengine.*;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -368,6 +370,10 @@ public class Audit {
      * @return audit results.
      */
     public String toString(){
+
+        DecimalFormat format = new DecimalFormat("#.#");
+        format.setRoundingMode(RoundingMode.FLOOR);
+
         if (runCount == 0){
             return "no audit available\n";
         }
@@ -375,7 +381,7 @@ public class Audit {
             StringBuilder sb = new StringBuilder();
 
             sb.append("======================================\n" +
-                    "# " + auditType + " audit\n" +
+                    "# " + auditType + " Audit\n" +
                     "======================================\n" +
                     "- % SAVED AFTER " + runCount + " RUNS");
 
@@ -383,13 +389,14 @@ public class Audit {
             List<Map.Entry<String, Double>> dataList = sortedOut();
 
             for(Map.Entry<String, Double> item : dataList){
-                sb.append("\n" + item.getKey() + ": " + String.format("%.1f", item.getValue()));
+//                sb.append("\n" + item.getKey() + ": " + String.format("%.1f", item.getValue()));
+                sb.append("\n" + item.getKey() + ": " + format.format(item.getValue()));
             }
 
             sb.append("\n--");
 
-            sb.append("\naverage age: " + String.format("%.1f", averageAge) + "\n");
-
+//            sb.append("\naverage age: " + String.format("%.1f", averageAge));
+            sb.append("\naverage age: " + format.format(averageAge));
             return sb.toString();
         }
     }
