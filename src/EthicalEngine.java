@@ -23,11 +23,6 @@ public class EthicalEngine {
      */
     public static void main(String[] args) {
         Scanner keyboard = new Scanner(System.in);
-
-        System.out.print("$ java Ethical Engine ");
-//        String cmd = keyboard.nextLine();
-        // split command by whitespace
-//        List<String> command = new ArrayList<>(Arrays.asList(cmd.split(" ")));
         List<String> command = new ArrayList<>(Arrays.asList(args));
 
         // Help message

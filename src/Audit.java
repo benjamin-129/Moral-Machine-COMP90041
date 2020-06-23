@@ -72,9 +72,6 @@ public class Audit {
             ethicalengine.Character[] passengers = sceArray[i].getPassengers();
             ethicalengine.Character[] pedestrians = sceArray[i].getPedestrians();
 
-//            legalityInsert(sceArray[i], data);
-
-
             if(decisions[i].equals(EthicalEngine.Decision.PASSENGERS)){
                 runInsert(passengers, pedestrians, sceArray[i].isLegalCrossing());
             }
@@ -96,8 +93,6 @@ public class Audit {
             EthicalEngine.Decision decision = EthicalEngine.decide(sce);
             ethicalengine.Character[] passengers = sce.getPassengers();
             ethicalengine.Character[] pedestrians = sce.getPedestrians();
-
-//            legalityInsert(sce, data);
 
             if(decision.equals(EthicalEngine.Decision.PASSENGERS)){
                 runInsert(passengers, pedestrians, sce.isLegalCrossing());
@@ -160,11 +155,7 @@ public class Audit {
                 }
             }
             if(Arrays.asList(professions).contains(key.toUpperCase())){
-                // Ignore Unknown professions
-                if(!Person.Profession.valueOf(key.toUpperCase()).equals
-                        (Person.Profession.UNKNOWN)){
                     survivorCalcUtil(key);
-                }
             }
             if(Arrays.asList(genders).contains(key.toUpperCase())){
                 // Ignore Unknown gender
@@ -219,7 +210,7 @@ public class Audit {
         // Add number of red and green totals
 
 
-        // Add characteristcs for each winner
+        // Add characteristics for each winner
         for(ethicalengine.Character c : winner){
 
             legalityInsert(legality, survivorData);
