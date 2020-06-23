@@ -71,14 +71,15 @@ public class Audit {
             runCount += 1;
             ethicalengine.Character[] passengers = sceArray[i].getPassengers();
             ethicalengine.Character[] pedestrians = sceArray[i].getPedestrians();
-            legalityInsert(sceArray[i], data);
+
+//            legalityInsert(sceArray[i], data);
 
 
             if(decisions[i].equals(EthicalEngine.Decision.PASSENGERS)){
-                runInsert(passengers, pedestrians);
+                runInsert(passengers, pedestrians, sceArray[i].isLegalCrossing());
             }
             if(decisions[i].equals(EthicalEngine.Decision.PEDESTRIANS)){
-                runInsert(pedestrians, passengers);
+                runInsert(pedestrians, passengers, sceArray[i].isLegalCrossing());
             }
         }
         survivalRatioCalc();
@@ -96,13 +97,13 @@ public class Audit {
             ethicalengine.Character[] passengers = sce.getPassengers();
             ethicalengine.Character[] pedestrians = sce.getPedestrians();
 
-            legalityInsert(sce, data);
+//            legalityInsert(sce, data);
 
             if(decision.equals(EthicalEngine.Decision.PASSENGERS)){
-                runInsert(passengers, pedestrians);
+                runInsert(passengers, pedestrians, sce.isLegalCrossing());
             }
             if(decision.equals(EthicalEngine.Decision.PEDESTRIANS)){
-                runInsert(pedestrians, passengers);
+                runInsert(pedestrians, passengers, sce.isLegalCrossing());
             }
         }
     }
@@ -121,13 +122,12 @@ public class Audit {
         // Average age calculation
         averageAge = totalAgeSurvivors/totalPersonSurvivors;
 
+        // Legality of crossing tally
+        survivorCalcUtil("green");
+        survivorCalcUtil("red");
 
         for(String key : data.keySet()){
-            // Legality of crossing tally
-            if(key.equals("red") || key.equals("green")){
-                calcData.put(key, data.get(key)/ runCount);
 
-            }
             // Animal Characteristics
             if(key.equals("animal")){
                 survivorCalcUtil(key);
@@ -212,8 +212,21 @@ public class Audit {
      * @param winner character array containing the survivors for the scenario.
      * @param loser character array containing the non-survivors for the scenario.
      */
-    private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser){
+    private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser,
+                           boolean legality){
+
+
+        // Add number of red and green totals
+
+
+        // Add characteristcs for each winner
         for(ethicalengine.Character c : winner){
+
+            legalityInsert(legality, survivorData);
+            legalityInsert(legality, data);
+
+
+
             if(c instanceof Person){
                 totalPersonSurvivors += 1;
 
@@ -227,7 +240,12 @@ public class Audit {
                 animalInsertKey(c, survivorData);
             }
         }
+
+        // Add characteristics for each loser
         for(ethicalengine.Character p : loser){
+
+            legalityInsert(legality, data);
+
             if(p instanceof Person){
                 personKeyInsert(p, data);
             }
@@ -240,25 +258,16 @@ public class Audit {
     /**
      * legalityInsert is a helper method that tallies the legality of the road crossing in the
      * a hashtable (data).
-     * @param sce scenario object.
+     * @param legality boolean representing legality of crossing
      * @param hTable data hashtable.
      */
-    private void legalityInsert(Scenario sce, Hashtable<String, Double> hTable){
-        if(sce.isLegalCrossing()){
-            if(hTable.containsKey("green")){
-                hTable.put("green", hTable.get("green") + 1);
-            }
-            else{
-                hTable.put("green", 1.0);
-            }
+    private void legalityInsert(boolean legality, Hashtable<String, Double> hTable){
+
+        if(legality){
+            tallyKeyInsert("green", hTable);
         }
         else{
-            if(hTable.containsKey("red")){
-                hTable.put("red", hTable.get("red") + 1.0);
-            }
-            else{
-                hTable.put("red", 1.0);
-            }
+            tallyKeyInsert("red", hTable);
         }
     }
 
@@ -372,7 +381,7 @@ public class Audit {
     public String toString(){
 
         DecimalFormat format = new DecimalFormat("#.#");
-        format.setRoundingMode(RoundingMode.FLOOR);
+        format.setRoundingMode(RoundingMode.DOWN);
 
         if (runCount == 0){
             return "no audit available\n";
@@ -389,8 +398,10 @@ public class Audit {
             List<Map.Entry<String, Double>> dataList = sortedOut();
 
             for(Map.Entry<String, Double> item : dataList){
+                String val = String.valueOf(item.getValue()).substring(0, 3);
 //                sb.append("\n" + item.getKey() + ": " + String.format("%.1f", item.getValue()));
-                sb.append("\n" + item.getKey() + ": " + format.format(item.getValue()));
+//                sb.append("\n" + item.getKey() + ": " + format.format(item.getValue()));
+                sb.append("\n" + item.getKey() + ": " + val);
             }
 
             sb.append("\n--");
