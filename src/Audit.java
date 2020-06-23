@@ -35,7 +35,6 @@ public class Audit {
      */
     public Audit(){
     }
-
     /**
      * Constructor for Audit object that takes an array of Scenarios.
      * @param scenarios array of scenarios.
@@ -58,6 +57,24 @@ public class Audit {
      * run is a method that runs the audit when EthicalEngine is run when not in interactive mode.
      */
     public void run(){
+        runUtil();
+        survivalRatioCalc();
+    }
+
+    /**
+     * run is a method that runs the audit on runs number of random scenarios.
+     * @param runs number of runs
+     */
+    public void run(int runs){
+
+        // Build Scenarios
+        sceArray = new Scenario[runs];
+        ScenarioGenerator randomSceGen = new ScenarioGenerator();
+        for(int i = 0; i < sceArray.length; i++){
+            sceArray[i] = randomSceGen.generate();
+        }
+
+        // Conduct Audit
         runUtil();
         survivalRatioCalc();
     }
@@ -102,7 +119,6 @@ public class Audit {
             }
         }
     }
-
 
     /**
      * survivalRatioCalc is a method that calculates the survival ratios for all characteristics.
@@ -206,13 +222,10 @@ public class Audit {
     private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser,
                            boolean legality){
 
-
-        // Add number of red and green totals
-
-
         // Add characteristics for each winner
         for(ethicalengine.Character c : winner){
 
+            // Add red and green tally
             legalityInsert(legality, survivorData);
             legalityInsert(legality, data);
 
@@ -390,14 +403,10 @@ public class Audit {
 
             for(Map.Entry<String, Double> item : dataList){
                 String val = String.valueOf(item.getValue()).substring(0, 3);
-//                sb.append("\n" + item.getKey() + ": " + String.format("%.1f", item.getValue()));
-//                sb.append("\n" + item.getKey() + ": " + format.format(item.getValue()));
                 sb.append("\n" + item.getKey() + ": " + val);
             }
 
             sb.append("\n--");
-
-//            sb.append("\naverage age: " + String.format("%.1f", averageAge));
             sb.append("\naverage age: " + format.format(averageAge));
             return sb.toString();
         }

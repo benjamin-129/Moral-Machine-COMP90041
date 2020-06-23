@@ -10,6 +10,11 @@ package ethicalengine;
 public class InvalidDataFormatException extends Exception {
 
     /**
+     * Empty Constructor
+     */
+    public InvalidDataFormatException(){}
+
+    /**
      * Constructor for InvalidDataFormatException
      * @param line is an int that states the line number of the csv file.
      */

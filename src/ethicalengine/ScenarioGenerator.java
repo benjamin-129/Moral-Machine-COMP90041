@@ -47,10 +47,10 @@ public class ScenarioGenerator {
     public ScenarioGenerator(long seed, int passengerCountMinimum, int passengerCountMaximum,
                              int pedestrianCountMinimum, int pedestrianCountMaximum){
         this.r = new Random(seed);
-        setPassengerCountMinimum(passengerCountMinimum);
-        setPassengerCountMaximum(passengerCountMaximum);
-        setPedestrianCountmaximum(pedestrianCountMaximum);
-        setPedestrianCountMinimum(pedestrianCountMinimum);
+        setPassengerCountMin(passengerCountMinimum);
+        setPassengerCountMax(passengerCountMaximum);
+        setPedestrianCountMax(pedestrianCountMaximum);
+        setPedestrianCountMin(pedestrianCountMinimum);
     }
 
 
@@ -59,7 +59,7 @@ public class ScenarioGenerator {
      * scenario.
      * @param passengerCountMinimum minimum number of passengers.
      */
-    private void setPassengerCountMinimum(int passengerCountMinimum) {
+    public void setPassengerCountMin(int passengerCountMinimum) {
         if(passengerCountMinimum < this.passengerCountMaximum){
             this.passengerCountMinimum = passengerCountMinimum;
         }
@@ -70,7 +70,7 @@ public class ScenarioGenerator {
      * scenario.
      * @param passengerCountMaximum maximum number of passengers.
      */
-    private void setPassengerCountMaximum(int passengerCountMaximum) {
+    public void setPassengerCountMax(int passengerCountMaximum) {
         this.passengerCountMaximum = passengerCountMaximum;
     }
 
@@ -79,18 +79,18 @@ public class ScenarioGenerator {
      * scenario.
      * @param pedestrianCountMinimum minumum number of pedestrians.
      */
-    private void setPedestrianCountMinimum(int pedestrianCountMinimum) {
+    public void setPedestrianCountMin(int pedestrianCountMinimum) {
         if(pedestrianCountMinimum < this.passengerCountMaximum){
             this.pedestrianCountMinimum = pedestrianCountMinimum;
         }
     }
 
     /**
-     * setPedestrianCountmaximum is a method that sets the maximum number of pedestrians in the
+     * setPedestrianCountMax is a method that sets the maximum number of pedestrians in the
      * scenario.
      * @param pedestrianCountMaximum maximum number of pedestrians.
      */
-    private void setPedestrianCountmaximum(int pedestrianCountMaximum) {
+    public void setPedestrianCountMax(int pedestrianCountMaximum) {
         this.pedestrianCountMaximum = pedestrianCountMaximum;
     }
 
@@ -99,7 +99,7 @@ public class ScenarioGenerator {
      * getRandomPerson is a method that creates a Person object with random variables.
      * @return Person object with random variables.
      */
-    private Person getRandomPerson(){
+    public Person getRandomPerson(){
         int randBodyType = r.nextInt(Character.BodyType.values().length);
         int randAge = r.nextInt(118); // Oldest person alive is 117 years old
         int randProf = r.nextInt(Person.Profession.values().length - 1); // Ignore NONE enum
@@ -117,7 +117,7 @@ public class ScenarioGenerator {
      * getRandomAnimal is a method that creates an Animal object with random variables.
      * @return Animal object with random variables.
      */
-    private Animal getRandomAnimal(){
+    public Animal getRandomAnimal(){
         String[] species = new String[] {"cat", "dog", "bird", "hamster", "rabbit"};
         int randGend = r.nextInt(Character.Gender.values().length-1);
         int randAge = r.nextInt(121); //Oldest pet alive is 120 years old, Tommy the Tortoise

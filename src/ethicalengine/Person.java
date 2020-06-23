@@ -38,6 +38,21 @@ public class Person extends Character {
     }
 
     /**
+     * Empty Constructor
+     */
+    public Person(){}
+
+    /**
+     * Basic Constructor for person.
+     * @param age age of the person.
+     * @param gender gender of the person.
+     * @param bodyType body type of the person.
+     */
+    public Person(int age, Gender gender, BodyType bodyType){
+        super(age, gender, bodyType);
+    }
+
+    /**
      * Constructor for a Person object.
      * @param age age of the person.
      * @param profession profession of the person.
@@ -49,7 +64,7 @@ public class Person extends Character {
                   boolean isPregnant){
         super(age, gender, bodyType);
         setAgeCategory();
-        setAsPregnant(isPregnant);
+        setPregnant(isPregnant);
         setProfession(profession);
 
     }
@@ -128,11 +143,11 @@ public class Person extends Character {
     }
 
     /**
-     * setAsPregnant is a method to set the pregnant status of a person.
+     * setPregnant is a method to set the pregnant status of a person.
      * Only adult females can be pregnant.
      * @param isPregnant Boolean status of pregnancy.
      */
-    public void setAsPregnant(boolean isPregnant){
+    public void setPregnant(boolean isPregnant){
         if (this.getGender() == Gender.FEMALE && this.ageCategory == AgeCategory.ADULT){
             this.isPregnant = isPregnant;
         }

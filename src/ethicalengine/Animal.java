@@ -11,6 +11,10 @@ public class Animal extends Character {
     private boolean isPet = false;
 
     /**
+     * Empty Constructor
+     */
+    public Animal(){}
+    /**
      * Constructor for the animal class that takes a species parameter and creates an animal object.
      * @param species The species of the animal.
      */

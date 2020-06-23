@@ -14,6 +14,11 @@ public class Scenario {
     private boolean isLegalCrossing;
 
     /**
+     * Empty Constructor
+     */
+    public Scenario(){}
+
+    /**
      * Constructor for the scenario class that creates a scenario using the parameters below
      * @param passengers an array of Character class objects that represents the passengers in
      *                   the scenario.

@@ -213,7 +213,6 @@ public class EthicalEngine {
             // Generate between 1 to 10 random scenarios
             int numScenarios = r.nextInt(10)+1;
 
-
             // Build scenarios
 
             Scenario[] randomSceArr = new Scenario[numScenarios];
