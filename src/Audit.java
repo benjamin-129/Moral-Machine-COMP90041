@@ -2,6 +2,7 @@ import ethicalengine.*;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -230,8 +231,6 @@ public class Audit {
             legalityInsert(legality, survivorData);
             legalityInsert(legality, data);
 
-
-
             if(c instanceof Person){
                 totalPersonSurvivors += 1;
 
@@ -385,7 +384,7 @@ public class Audit {
      */
     public String toString(){
 
-        DecimalFormat format = new DecimalFormat("#.#");
+        DecimalFormat format = new DecimalFormat("##0.0");
         format.setRoundingMode(RoundingMode.DOWN);
 
         if (runCount == 0){
@@ -403,7 +402,7 @@ public class Audit {
             List<Map.Entry<String, Double>> dataList = sortedOut();
 
             for(Map.Entry<String, Double> item : dataList){
-                String val = String.valueOf(item.getValue()).substring(0, 3);
+                String val = format.format(item.getValue());
                 sb.append("\n" + item.getKey() + ": " + val);
             }
 
@@ -435,7 +434,7 @@ public class Audit {
                 bw.write(this.toString());
                 bw.flush();
             }
-            catch (Exception e){
+            catch (IOException e){
             }
         }
     }

@@ -81,7 +81,8 @@ public class EthicalEngine {
 
             // read ascii
             try {
-                BufferedReader welcome = new BufferedReader(new FileReader("welcome.ascii"));
+                BufferedReader welcome = new BufferedReader(
+                        new FileReader("welcome.ascii"));
                 String line;
                 while ((line = welcome.readLine()) != null) {
                     System.out.println(line);
@@ -112,9 +113,7 @@ public class EthicalEngine {
                 }
             }
 
-
             // import config file if -c exists
-
             Scenario[] userScenario;
 
 
@@ -133,7 +132,8 @@ public class EthicalEngine {
 
                 int chunk = 3; // chunk size to divide
                 for (int i = 0; i < configSce.size(); i += chunk) {
-                    userScenarioArr.add(configSce.subList(i, Math.min(configSce.size(), i + chunk)));
+                    userScenarioArr.add(configSce.subList(i,
+                            Math.min(configSce.size(), i + chunk)));
                 }
 
                 // -i -c config.csv
@@ -144,7 +144,8 @@ public class EthicalEngine {
                 for (int i=0; i<userScenarioArr.size(); i++){
                     if(continueStatus){
                         userScenario =
-                                userScenarioArr.get(i).toArray(new Scenario[userScenarioArr.get(i).size()]);
+                                userScenarioArr.get(i).toArray(
+                                        new Scenario[userScenarioArr.get(i).size()]);
 
                         // Replace scenarios
                         interactiveAudit.changeScenarios(userScenario);
@@ -169,8 +170,7 @@ public class EthicalEngine {
                                 System.in.read();
                                 System.exit(0);
                             }
-                            catch(Exception e){}
-
+                            catch(IOException e){}
                         }
                     }
                 }
@@ -199,14 +199,12 @@ public class EthicalEngine {
                     System.out.println("Would you like to continue? (yes/no)");
                     String inp = keyboard.nextLine();
 
-
                     if(inp.equals("no")){
                         System.exit(0);
                     }
                 }
             }
         }
-
 
 
         // -c or --config (without interactive mode)
@@ -229,10 +227,7 @@ public class EthicalEngine {
 
             // Save to file
             userLogUtil(true, command, configAudit);
-
-
         }
-
 
 
         // No -i, -c  or -h flags, run random scenarios. Save in filepath if -r provided
@@ -261,7 +256,6 @@ public class EthicalEngine {
             // Save to file
             userLogUtil(true, command, randomSceAudit);
         }
-
     }
 
     /**
@@ -296,11 +290,6 @@ public class EthicalEngine {
                 if (validCommands.contains(command.get(index + 1))){
                     System.out.println(help);
                     System.exit(0);
-                }
-
-                // Check for invalid data format for config files
-                else{
-
                 }
             }
             catch (IndexOutOfBoundsException e){
@@ -381,7 +370,6 @@ public class EthicalEngine {
                 else{
                     interactiveAudit.printToFile("results.log");
                 }
-
             }
         }
     }
@@ -502,7 +490,6 @@ public class EthicalEngine {
                             csvIndex += 1;
                         }
                     }
-
                 }
 
 
@@ -558,19 +545,23 @@ public class EthicalEngine {
             }
 
             // Parse Gender
-            if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
+            if(!isInEnum(configData.get(index).get(1).toUpperCase(),
+                    ethicalengine.Character.Gender.class)){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
-                gend = ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
+                gend = ethicalengine.Character.Gender.valueOf(
+                        configData.get(index).get(1).toUpperCase());
             }
 
             // Parse Body Type
-            if(!isInEnum(configData.get(index).get(3).toUpperCase(), ethicalengine.Character.BodyType.class)){
+            if(!isInEnum(configData.get(index).get(3).toUpperCase(),
+                    ethicalengine.Character.BodyType.class)){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
-                bodyType = ethicalengine.Character.BodyType.valueOf(configData.get(index).get(3).toUpperCase());
+                bodyType = ethicalengine.Character.BodyType.valueOf(
+                        configData.get(index).get(3).toUpperCase());
             }
 
             // Parse Pregnancy status
@@ -594,7 +585,6 @@ public class EthicalEngine {
                     isYou = true;
                 }
             }
-
         }
         catch(NumberFormatException e){
             System.out.println("WARNING: invalid number format in config " +
@@ -642,14 +632,15 @@ public class EthicalEngine {
             }
 
             // Parse Gender
-            if(!isInEnum(configData.get(index).get(1).toUpperCase(), ethicalengine.Character.Gender.class)){
+            if(!isInEnum(configData.get(index).get(1).toUpperCase(),
+                    ethicalengine.Character.Gender.class)){
                 throw new ethicalengine.InvalidCharacteristicException(index+2);
             }
             else{
                 gend =
-                        ethicalengine.Character.Gender.valueOf(configData.get(index).get(1).toUpperCase());
+                        ethicalengine.Character.Gender.valueOf(
+                                configData.get(index).get(1).toUpperCase());
             }
-
             // Parse isPet
             if(!configData.get(index).get(8).toUpperCase().equals("TRUE") &&
                     !configData.get(index).get(8).toUpperCase().equals("FALSE")){
@@ -704,7 +695,6 @@ public class EthicalEngine {
             return name().toLowerCase();
         }
     }
-
 
     /**
      * decide is a method that takes in data from the passengers and pedestrians and adds or
@@ -822,7 +812,5 @@ public class EthicalEngine {
         else{
             return Decision.PEDESTRIANS;
         }
-
     }
-
 }

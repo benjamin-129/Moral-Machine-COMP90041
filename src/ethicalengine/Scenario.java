@@ -140,7 +140,5 @@ public class Scenario {
             sb.append("\n- " + pedestrians[i].toString());
         }
         return sb.toString();
-
     }
-
 }

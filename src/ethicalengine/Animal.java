@@ -92,7 +92,6 @@ public class Animal extends Character {
         }
     }
 
-
     /**
      * Method that returns a boolean status on whether the animal is pregnant.
      * @return false for the purpose of this program.
