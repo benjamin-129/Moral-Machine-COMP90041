@@ -25,8 +25,8 @@ public class Audit {
     private Hashtable<String, Double> calcData = new Hashtable<String, Double>();
     private ArrayList<String> speciesList = new ArrayList<>();
     private double totalPersonSurvivors = 0;
-    private double totalAgeSurvivors = 0;
-    private double averageAge= 0;
+    private double totalAgeSurvivors = 0.0;
+    private double averageAge= 0.0;
     private int runCount = 0;
 
 
@@ -132,6 +132,7 @@ public class Audit {
 
         // Average age calculation
         averageAge = totalAgeSurvivors/totalPersonSurvivors;
+
 
         // Legality of crossing tally
         survivorCalcUtil("green");

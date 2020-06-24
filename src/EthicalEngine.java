@@ -48,6 +48,37 @@ public class EthicalEngine {
         // -i or --interactive mode
         else if(command.contains("-i") || command.contains("--interactive")) {
             pathValidityCheck(command, help);
+
+            // Check config file for invalid data format if config file provided, if not invalid,
+            // parse data. If no config file provided, ignore.
+
+            if (command.contains("-c") || command.contains("--config")) {
+                // convert CSV to nested list
+                List<List<String>> configData = configReader(command);
+
+                int csvIndex = 0;
+                while(csvIndex < configData.size()){
+                    try{
+                        if(configData.get(csvIndex).get(0).substring(0, 3).equals("sce")){
+                            csvIndex += 1;
+                            continue;
+                        }
+                        else{
+                            if(configData.get(csvIndex).size() != 10){
+                                throw new ethicalengine.InvalidDataFormatException(csvIndex+2);
+                            }
+                            csvIndex += 1;
+                        }
+                    }
+                    catch(ethicalengine.InvalidDataFormatException e) {
+                        System.out.println(e.getMessage());
+                        csvIndex += 1;
+                    }
+
+                }
+            }
+
+
             // read ascii
             try {
                 BufferedReader welcome = new BufferedReader(new FileReader("welcome.ascii"));
@@ -188,7 +219,6 @@ public class EthicalEngine {
             // Build scenarios
             List<Scenario> configSce = configInsertUtil(configData);
 
-
             Scenario[] auditConfigSce = configSce.toArray(new Scenario[configSce.size()]);
 
             Audit configAudit = new Audit(auditConfigSce);
@@ -266,6 +296,11 @@ public class EthicalEngine {
                 if (validCommands.contains(command.get(index + 1))){
                     System.out.println(help);
                     System.exit(0);
+                }
+
+                // Check for invalid data format for config files
+                else{
+
                 }
             }
             catch (IndexOutOfBoundsException e){
@@ -420,55 +455,56 @@ public class EthicalEngine {
 
                 csvIndex += 1;
                 while(csvIndex < configData.size()){
+
                     if(configData.get(csvIndex).get(0).substring(0, 3).equals("sce")){
                         break;
                     }
-                    try{
-                        // Check if data format is valid (10 items in row), if invalid, throw
-                        // invalid data format exception.
-                        if(configData.get(csvIndex).size() != 10){
-                            throw new ethicalengine.InvalidDataFormatException(csvIndex+2);
-                        }
 
-                        // Processes character and adds the character into a character arraylist
-                        // depending on whether the character is a pedestrian or passenger
-
-                        // Processing Person
-                        else if(configData.get(csvIndex).get(0).substring(0,3).equals("per")) {
-                            // Passenger
-                            if (configData.get(csvIndex).get(9).substring(0, 3).equals(
-                                    "pas")) {
-                                configPasse.add(addPersonCSV(csvIndex, configData));
-                            }
-                            // Pedestrian
-                            else if (configData.get(csvIndex).get(9).substring(0, 3).equals(
-                                    "ped")) {
-                                configPeds.add(addPersonCSV(csvIndex, configData));
-                            }
-                        }
-                        // Processing Animal
-                        else if(configData.get(csvIndex).get(0).substring(0,3).equals("ani")){
-
-                            // Animal passenger
-                            if(configData.get(csvIndex).get(9).substring(0,3).equals(
-                                    "pas")){
-
-                                configPasse.add(addAnimalCSV(csvIndex, configData));
-                            }
-                            // Animal Pedestrian
-                            else if(configData.get(csvIndex).get(9).substring(0,3).equals(
-                                    "ped")){
-                                configPeds.add(addAnimalCSV(csvIndex, configData));
-                            }
-                        }
-                    }
-                    catch(ethicalengine.InvalidDataFormatException e){
-                        System.out.println(e.getMessage());
-                    }
-                    finally{
+                    // Check if data format is valid (10 items in row), if invalid, throw
+                    // invalid data format exception.
+                    else if(configData.get(csvIndex).size() != 10){
                         csvIndex += 1;
+                        continue;
                     }
+
+                    // Processes character and adds the character into a character arraylist
+                    // depending on whether the character is a pedestrian or passenger
+
+                    // Processing Person
+                    else if(configData.get(csvIndex).get(0).substring(0,3).equals("per")) {
+
+                        // Passenger
+                        if (configData.get(csvIndex).get(9).substring(0, 3).equals(
+                                "pas")) {
+                            configPasse.add(addPersonCSV(csvIndex, configData));
+                            csvIndex += 1;
+                        }
+                        // Pedestrian
+                        else if (configData.get(csvIndex).get(9).substring(0, 3).equals(
+                                "ped")) {
+                            configPeds.add(addPersonCSV(csvIndex, configData));
+                            csvIndex += 1;
+                        }
+                    }
+                    // Processing Animal
+                    else if(configData.get(csvIndex).get(0).substring(0,3).equals("ani")){
+
+                        // Animal passenger
+                        if(configData.get(csvIndex).get(9).substring(0,3).equals(
+                                "pas")){
+                            configPasse.add(addAnimalCSV(csvIndex, configData));
+                            csvIndex += 1;
+                        }
+                        // Animal Pedestrian
+                        else if(configData.get(csvIndex).get(9).substring(0,3).equals(
+                                "ped")){
+                            configPeds.add(addAnimalCSV(csvIndex, configData));
+                            csvIndex += 1;
+                        }
+                    }
+
                 }
+
 
                 // Convert passenger and pedestrian arraylists to arrays
                 ethicalengine.Character[] pass =
