@@ -31,10 +31,8 @@ public class Animal extends Character {
      * @param isPet Whether the animal is a pet.
      */
     public Animal(String species, int age, Gender gender, BodyType bodyType, boolean isPet){
+        super(age, gender, bodyType);
         setSpecies(species);
-        this.setAge(age);
-        this.setGender(gender);
-        this.setBodyType(bodyType);
         this.setPet(isPet);
     }
 
