@@ -220,6 +220,7 @@ public class Audit {
      * survivorData hash table.
      * @param winner character array containing the survivors for the scenario.
      * @param loser character array containing the non-survivors for the scenario.
+     * @param legality boolean legality status
      */
     private void runInsert(ethicalengine.Character[] winner, ethicalengine.Character[] loser,
                            boolean legality){

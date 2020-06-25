@@ -724,7 +724,7 @@ public class EthicalEngine {
 
         // Add weights for each characteristic needed for passengers
         for (int i = 0; i < passengers.length; i++){
-            if(passengers[i].getBodyType() == ethicalengine.Character.BodyType.AVERAGE
+            if(passengers[i].getBodyType().equals(ethicalengine.Character.BodyType.AVERAGE)
                     || passengers[i].getBodyType() == ethicalengine.Character.BodyType.ATHLETIC){
                 passWeight += 2;
             }
