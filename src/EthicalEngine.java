@@ -107,6 +107,9 @@ public class EthicalEngine {
                         consent = true;
                         validIn = true;
                     }
+                    else{
+                        validIn = true;
+                    }
                 }
                 catch (ethicalengine.InvalidInputException e){
                     System.out.println(e.getMessage());
